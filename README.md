@@ -1,2 +1,2 @@
-# openg2p-offline-vc-verifier
+# OpenG@P Offline VC Verifier
 OpenG2P Offline VC Verifier
