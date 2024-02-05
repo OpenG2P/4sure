@@ -1,79 +1,83 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# OSX
 
-# Getting Started
+#
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+.DS_Store
 
-## Step 1: Start the Metro Server
+# Xcode
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+#
 
-To start Metro, run the following command from the _root_ of your React Native project:
+build/
+_.pbxuser
+!default.pbxuser
+_.mode1v3
+!default.mode1v3
+_.mode2v3
+!default.mode2v3
+_.perspectivev3
+!default.perspectivev3
+xcuserdata
+_.xccheckout
+_.moved-aside
+DerivedData
+_.hmap
+_.ipa
+\*.xcuserstate
+ios/.xcode.env.local
 
-```bash
-# using npm
-npm start
+# Android/IntelliJ
 
-# OR using Yarn
-yarn start
-```
+#
 
-## Step 2: Start your Application
+build/
+.idea
+.gradle
+local.properties
+_.iml
+_.hprof
+.cxx/
+\*.keystore
+!debug.keystore
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+# node.js
 
-### For Android
+#
 
-```bash
-# using npm
-npm run android
+node_modules/
+npm-debug.log
+yarn-error.log
 
-# OR using Yarn
-yarn android
-```
+# fastlane
 
-### For iOS
+#
 
-```bash
-# using npm
-npm run ios
+# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
 
-# OR using Yarn
-yarn ios
-```
+# screenshots whenever they are needed.
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+# For more information about the recommended setup visit:
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+# https://docs.fastlane.tools/best-practices/source-control/
 
-## Step 3: Modifying your App
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
 
-Now that you have successfully run the app, let's modify it.
+# Bundle artifact
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+\*.jsbundle
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+# Ruby / CocoaPods
 
-## Congratulations! :tada:
+/ios/Pods/
+/vendor/bundle/
 
-You've successfully run and modified your React Native App. :partying_face:
+# Temporary files created by Metro to check the health of the file watcher
 
-### Now what?
+.metro-health-check\*
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+# testing
 
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+/coverage
