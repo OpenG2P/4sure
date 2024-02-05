@@ -6,8 +6,9 @@
  */
 
 import OvpBle, { useUI } from '@mosip/ble-verifier-sdk';
-import React, { useState } from 'react';
-import { Button, StyleSheet, Text, View} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Button, StyleSheet, Text, View, Platform, PermissionsAndroid } from 'react-native';
+import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 import { IntermediateStateUI } from './IntermediateStateUI';
 
@@ -16,7 +17,21 @@ const ovpble = new OvpBle({deviceName: "example"});
 
 function App(): React.JSX.Element {
 
-  
+  useEffect(() => {
+    requestBluetoothPermissions();
+  }, []);
+
+  const requestBluetoothPermissions = async () => {
+    if (Platform.OS === 'android' && Platform.Version >= 31) {
+      // Android 12 (API level 31) or higher
+      await request(PERMISSIONS.ANDROID.BLUETOOTH_ADVERTISE);
+      await request(PERMISSIONS.ANDROID.BLUETOOTH_CONNECT);
+    } else if (Platform.OS === 'android') {
+      // Android 11 (API level 30) or lower
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.BLUETOOTH);
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN);
+    }
+  };
 
   const {state} = useUI(ovpble)
   const [result, setResult] = useState<any>('');
