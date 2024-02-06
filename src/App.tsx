@@ -59,7 +59,7 @@ function App(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      {(state.name === 'Idle' || state.name === 'Disconnected') && (
+      {(state.name === 'Received' || state.name === 'Disconnected') && (
         <Button title={'Return VC'} onPress={returnVC} />
       )}
       {result && (

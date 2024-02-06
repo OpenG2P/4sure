@@ -12,7 +12,14 @@ export function IntermediateStateUI(props: { state: IntermediateState }) {
                 <QRCode size={200} value={props.state.data.uri} />
             )}
             {Object.entries(props.state.actions || {}).map(([name, action]) => (
-                <Button key={name} title={name} onPress={() => action()} />
+              
+              <Button 
+                key={name} 
+                title={name === "startAdvertisement" ? "Show QR Code" : name} 
+                onPress={() => action()} 
+              />
+              
+          
             ))}
         </View>
     );
