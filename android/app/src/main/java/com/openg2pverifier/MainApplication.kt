@@ -1,4 +1,4 @@
-package com.openg2pverifier
+package org.openg2p.offlineverifier
 
 import android.app.Application
 import com.facebook.react.PackageList

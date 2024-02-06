@@ -74,9 +74,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.openg2pverifier"
+    namespace "org.openg2p.offlineverifier"
     defaultConfig {
-        applicationId "com.openg2pverifier"
+        applicationId "org.openg2p.offlineverifier"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

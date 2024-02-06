@@ -1,4 +1,4 @@
-package com.openg2pverifier
+package org.openg2p.offlineverifier
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
