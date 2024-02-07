@@ -7,8 +7,8 @@
 
 import OvpBle, { useUI } from '@mosip/ble-verifier-sdk';
 import React, { useState, useEffect } from 'react';
-import { Button, StyleSheet, Text, View, Platform, PermissionsAndroid } from 'react-native';
-import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import { Button, StyleSheet, Text, View, Platform, PermissionsAndroid, Linking, NativeModules } from 'react-native';
+import { check, request, PERMISSIONS } from 'react-native-permissions';
 
 import { IntermediateStateUI } from './IntermediateStateUI';
 
@@ -51,17 +51,31 @@ function App(): React.JSX.Element {
 
     };
 
-  const returnVC = () => {
-    // TODO: Implement returnVC
-  }
+    const returnVC = () => {
+      if (!result || !result.verifiableCredential || !result.verifiableCredential.credential) {
+          console.error('VC details are not available');
+          // return;
+      }
+  
+    // TODO: Get actual VC data from the result and return it to ODK Collect
+    const jsonData = JSON.stringify({
+      first_name: "VC Test",
+      last_name: "Details",
+      age: 25,
+    });
+
+    NativeModules.ODKDataModule.returnDataToODKCollect(jsonData);
+      
+  };
     
-    const subject = result?.verifiableCredential?.credential?.credentialSubject;
+  const subject = result?.verifiableCredential?.credential?.credentialSubject;
 
   return (
     <View style={styles.container}>
-      {(state.name === 'Received' || state.name === 'Disconnected') && (
-        <Button title={'Return VC'} onPress={returnVC} />
+      {(state.name === 'Idle' || state.name === 'Disconnected') && (
+        <Button title={'Start Transfer'} onPress={startTransfer} />
       )}
+      <Button title={'Return VC'} onPress={returnVC} /> 
       {result && (
         <View>
           <Text style={styles.state}>Received VC</Text>
@@ -69,6 +83,7 @@ function App(): React.JSX.Element {
             VC ID: {subject?.UIN || subject?.VID}
           </Text>
           <Button title={'Restart'} onPress={startTransfer} />
+          <Button title={'Return VC'} onPress={returnVC} /> 
         </View>
       )}
       {error && (
