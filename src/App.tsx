@@ -7,7 +7,7 @@
 
 import OvpBle, { useUI } from '@mosip/ble-verifier-sdk';
 import React, { useState, useEffect } from 'react';
-import { Button, StyleSheet, Text, View, Platform, PermissionsAndroid, Linking, NativeModules } from 'react-native';
+import { Button, StyleSheet, Text, View, Platform, PermissionsAndroid, NativeModules } from 'react-native';
 import { check, request, PERMISSIONS } from 'react-native-permissions';
 
 import { IntermediateStateUI } from './IntermediateStateUI';
@@ -15,7 +15,7 @@ import { IntermediateStateUI } from './IntermediateStateUI';
 
 const ovpble = new OvpBle({deviceName: "example"});
 
-function App(): React.JSX.Element {
+export default function App() {
 
   useEffect(() => {
     requestBluetoothPermissions();
@@ -44,57 +44,61 @@ function App(): React.JSX.Element {
     ovpble.startTransfer()
       .then((vc) => {
         setResult(JSON.parse(vc));
+        // console.log("VC_DEBUG", JSON.parse(vc))
       })
       .catch((err) => {
         setError(err);
       });
 
-    };
+  };
 
-    const returnVC = () => {
-      if (!result || !result.verifiableCredential || !result.verifiableCredential.credential) {
-          console.error('VC details are not available');
-          // return;
-      }
-  
-    // TODO: Get actual VC data from the result and return it to ODK Collect
+  const returnVC = () => {
+    if (!result || !result.verifiableCredential) {
+        console.error('VC details are not available');
+        return;
+    }
+
+    const fullNameEng = result.verifiableCredential.credentialSubject.fullName.find((fn: { language: string; }) => fn.language === "eng").value;
+    const genderEng = result.verifiableCredential.credentialSubject.gender.find((g: { language: string; }) => g.language === "eng").value;
+    const dob = result.verifiableCredential.credentialSubject.dateOfBirth;
+    const uin = result.verifiableCredential.credentialSubject.UIN;
+
     const jsonData = JSON.stringify({
-      first_name: "VC Test",
-      last_name: "Details",
-      age: 25,
+      full_name: fullNameEng,
+      gender: genderEng,
+      dob: dob,
+      uin: uin
     });
 
     NativeModules.ODKDataModule.returnDataToODKCollect(jsonData);
-      
+    
   };
     
-  const subject = result?.verifiableCredential?.credential?.credentialSubject;
+  const subject = result?.verifiableCredential?.credentialSubject;
 
   return (
     <View style={styles.container}>
-      {(state.name === 'Idle' || state.name === 'Disconnected') && (
-        <Button title={'Start Transfer'} onPress={startTransfer} />
-      )}
-      <Button title={'Return VC'} onPress={returnVC} /> 
-      {result && (
-        <View>
-          <Text style={styles.state}>Received VC</Text>
-          <Text style={styles.state}>
-            VC ID: {subject?.UIN || subject?.VID}
-          </Text>
-          <Button title={'Restart'} onPress={startTransfer} />
-          <Button title={'Return VC'} onPress={returnVC} /> 
-        </View>
-      )}
-      {error && (
-        <View>
-          <Text style={styles.state}>Error In Transfer</Text>
-          <Text style={styles.state}>error: {JSON.stringify(error)}</Text>
-          <Button title={'Restart'} onPress={startTransfer} />
-        </View>
-      )}
-      <IntermediateStateUI state={state} />
-    </View>
+    {(state.name === 'Idle' || state.name === 'Disconnected') && (
+      <Button title={'Start Transfer'} onPress={startTransfer} />
+    )}
+    {result && (
+      <View>
+        <Text style={styles.state}>Received VC</Text>
+        <Text style={styles.state}>VC ID: {result?.id}</Text>
+        <Button title={'Restart'} onPress={startTransfer} />
+        <Button title={'Return VC'} onPress={returnVC} />
+      </View>
+    )}
+    {error && (
+      <View>
+        <Text style={styles.state}>Error In Transfer</Text>
+        <Text style={styles.state}>error: {JSON.stringify(error)}</Text>
+        <Button title={'Restart'} onPress={startTransfer} />
+      </View>
+    )}
+
+    <IntermediateStateUI state={state} />
+  </View>
   );
 }
 
@@ -112,5 +116,3 @@ const styles = StyleSheet.create({
     color: 'black',
   },
 });
-
-export default App;
