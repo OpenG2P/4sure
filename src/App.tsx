@@ -1,41 +1,64 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import OvpBle, { useUI } from '@mosip/ble-verifier-sdk';
 import React, { useState, useEffect } from 'react';
-import { Button, StyleSheet, Text, View, Platform, PermissionsAndroid, NativeModules } from 'react-native';
-import { check, request, PERMISSIONS } from 'react-native-permissions';
+import { Button, StyleSheet, Text, PermissionsAndroid, Platform, View, NativeModules } from 'react-native';
+import { request, PERMISSIONS, openSettings } from 'react-native-permissions';
+import { configure, faceCompare } from '@iriscan/biometric-sdk-react-native';
+import OvpBle, { useUI } from '@mosip/ble-verifier-sdk';
 
+import CameraPage from './CameraPage';
 import { IntermediateStateUI } from './IntermediateStateUI';
-
 
 const ovpble = new OvpBle({deviceName: "example"});
 
 export default function App() {
+  const [result, setResult] = useState<any>('');
+  const [error, setError] = useState<any>(null);
+  const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
+  const {state} = useUI(ovpble);
 
   useEffect(() => {
     requestBluetoothPermissions();
+    configureBiometricSDK();
   }, []);
 
-  const requestBluetoothPermissions = async () => {
+  async function requestBluetoothPermissions() {
     if (Platform.OS === 'android' && Platform.Version >= 31) {
-      // Android 12 (API level 31) or higher
       await request(PERMISSIONS.ANDROID.BLUETOOTH_ADVERTISE);
       await request(PERMISSIONS.ANDROID.BLUETOOTH_CONNECT);
     } else if (Platform.OS === 'android') {
-      // Android 11 (API level 30) or lower
       await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.BLUETOOTH);
       await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN);
     }
-  };
+  }
 
-  const {state} = useUI(ovpble)
-  const [result, setResult] = useState<any>('');
-  const [error, setError] = useState<any>(null);
+  async function configureBiometricSDK() {
+    let config = {
+      withFace: {
+        encoder: {
+          tfModel: {
+            path: 'https://github.com/biometric-technologies/tensorflow-facenet-model-test/raw/master/model.tflite',
+            inputWidth: 160,
+            inputHeight: 160,
+            outputLength: 512,
+            modelChecksum: '797b4d99794965749635352d55da38d4748c28c659ee1502338badee4614ed06',
+          },
+        },
+        matcher: {
+          threshold: 1.0,
+        },
+        liveness: {
+          tfModel: {
+            path: 'https://github.com/biometric-technologies/liveness-detection-model/releases/download/v0.2.0/deePix.tflite',
+            inputWidth: 224,
+            inputHeight: 224,
+            // 0.0 - real, 1.0 - spoof
+            threshold: 0.5,
+            modelChecksum: "797b4d99794965749635352d55da38d4748c28c659ee1502338badee4614ed06",
+          },
+        },
+      },
+    };
+    await configure(config).then(() => console.log('Biometric SDK Ready'));
+  }
 
   const startTransfer = () => {
     setResult('');
@@ -52,29 +75,37 @@ export default function App() {
 
   };
 
-  const returnVC = () => {
-    if (!result || !result.verifiableCredential) {
-        console.error('VC details are not available');
-        return;
+  const returnVC = async () => {
+    if (!result || !result.verifiableCredential || !capturedPhoto) {
+      console.error('Required data is missing');
+      return;
     }
-
-    const fullNameEng = result.verifiableCredential.credentialSubject.fullName.find((fn: { language: string; }) => fn.language === "eng").value;
-    const genderEng = result.verifiableCredential.credentialSubject.gender.find((g: { language: string; }) => g.language === "eng").value;
-    const dob = result.verifiableCredential.credentialSubject.dateOfBirth;
-    const uin = result.verifiableCredential.credentialSubject.UIN;
-
-    const jsonData = JSON.stringify({
-      full_name: fullNameEng,
-      gender: genderEng,
-      dob: dob,
-      uin: uin
-    });
-
-    NativeModules.ODKDataModule.returnDataToODKCollect(jsonData);
     
+    const vcPhotoBase64 = result.verifiableCredential.credentialSubject.photo;
+    const comparisonResult = await faceCompare(capturedPhoto, vcPhotoBase64);
+
+    if (comparisonResult) {
+      const fullNameEng = result.verifiableCredential.credentialSubject.fullName.find((fn: { language: string; }) => fn.language === "eng").value;
+      const genderEng = result.verifiableCredential.credentialSubject.gender.find((g: { language: string; }) => g.language === "eng").value;
+      const dob = result.verifiableCredential.credentialSubject.dateOfBirth;
+      const uin = result.verifiableCredential.credentialSubject.UIN;
+
+      const jsonData = JSON.stringify({
+        full_name: fullNameEng,
+        gender: genderEng,
+        dob: dob,
+        uin: uin
+      });
+
+      NativeModules.ODKDataModule.returnDataToODKCollect(jsonData);
+    } else {
+      console.error('Face comparison failed: The faces do not match.');
+    }
   };
-    
-  const subject = result?.verifiableCredential?.credentialSubject;
+
+  const setPhoto = (photoBase64: string) => {
+    setCapturedPhoto(photoBase64);
+  };
 
   return (
     <View style={styles.container}>
@@ -85,7 +116,8 @@ export default function App() {
       <View>
         <Text style={styles.state}>Received VC</Text>
         <Text style={styles.state}>VC ID: {result?.id}</Text>
-        <Button title={'Restart'} onPress={startTransfer} />
+        {/* <Button title={'Restart'} onPress={startTransfer} /> */}
+        <CameraPage setPhoto={setPhoto} />
         <Button title={'Return VC'} onPress={returnVC} />
       </View>
     )}
