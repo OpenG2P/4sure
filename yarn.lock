@@ -1720,6 +1720,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@iriscan/biometric-sdk-react-native@npm:^0.2.8":
+  version: 0.2.8
+  resolution: "@iriscan/biometric-sdk-react-native@npm:0.2.8"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 051519775154523b3a15e088267a16f58f5efc9996af720ae59e7865609e4afc577745478c04fe19925ac9c4ca73758425eb1d9aac412fbfb71f908f451bbc77
+  languageName: node
+  linkType: hard
+
 "@isaacs/cliui@npm:^8.0.2":
   version: 8.0.2
   resolution: "@isaacs/cliui@npm:8.0.2"
@@ -2904,6 +2914,7 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
+    "@iriscan/biometric-sdk-react-native": ^0.2.8
     "@mosip/ble-verifier-sdk": ^0.1.1
     "@mosip/tuvali": ^0.4.9
     "@react-native/babel-preset": 0.73.20
