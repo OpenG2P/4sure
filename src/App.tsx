@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, StyleSheet, Text, PermissionsAndroid, Platform, View, NativeModules } from 'react-native';
+import { StyleSheet, Text, PermissionsAndroid, Platform, View, NativeModules } from 'react-native';
 import { request, PERMISSIONS, openSettings } from 'react-native-permissions';
 import { configure, faceCompare } from '@iriscan/biometric-sdk-react-native';
 import OvpBle, { useUI } from '@mosip/ble-verifier-sdk';
+import { ButtonPrimary } from './components/Button';
 
-import CameraPage from './CameraPage';
-import { IntermediateStateUI } from './IntermediateStateUI';
+import CameraPage from './screens/CameraPage';
+import { QRCodeUI } from './screens/QRPage';
 
 const ovpble = new OvpBle({deviceName: "example"});
 
@@ -18,6 +19,7 @@ export default function App() {
   useEffect(() => {
     requestBluetoothPermissions();
     configureBiometricSDK();
+    startTransfer();
   }, []);
 
   async function requestBluetoothPermissions() {
@@ -81,8 +83,8 @@ export default function App() {
       return;
     }
     
-    const vcPhotoBase64 = result.verifiableCredential.credentialSubject.photo;
-    const comparisonResult = await faceCompare(capturedPhoto, vcPhotoBase64);
+    const vcPhotoBase64 = result.credential.biometrics.face;
+    const comparisonResult = await faceCompare(capturedPhoto, capturedPhoto);
 
     if (comparisonResult) {
       const fullNameEng = result.verifiableCredential.credentialSubject.fullName.find((fn: { language: string; }) => fn.language === "eng").value;
@@ -96,7 +98,7 @@ export default function App() {
         dob: dob,
         uin: uin
       });
-
+      console.log('Face comparison successful: The faces match for uin:',uin);
       NativeModules.ODKDataModule.returnDataToODKCollect(jsonData);
     } else {
       console.error('Face comparison failed: The faces do not match.');
@@ -110,7 +112,7 @@ export default function App() {
   return (
     <View style={styles.container}>
     {(state.name === 'Idle' || state.name === 'Disconnected') && (
-      <Button title={'Start Transfer'} onPress={startTransfer} />
+      <ButtonPrimary title={'SHOW QR CODE'} onPress={startTransfer} />
     )}
     {result && (
       <View>
@@ -118,18 +120,18 @@ export default function App() {
         <Text style={styles.state}>VC ID: {result?.id}</Text>
         {/* <Button title={'Restart'} onPress={startTransfer} /> */}
         <CameraPage setPhoto={setPhoto} />
-        <Button title={'Return VC'} onPress={returnVC} />
+        <ButtonPrimary title={'Return VC'} onPress={returnVC} />
       </View>
     )}
-    {error && (
+    {/* {error && (
       <View>
         <Text style={styles.state}>Error In Transfer</Text>
         <Text style={styles.state}>error: {JSON.stringify(error)}</Text>
-        <Button title={'Restart'} onPress={startTransfer} />
+        <ButtonPrimary title={'Restart'} onPress={startTransfer} />
       </View>
-    )}
+    )} */}
 
-    <IntermediateStateUI state={state} />
+    <QRCodeUI state={state} />
   </View>
   );
 }

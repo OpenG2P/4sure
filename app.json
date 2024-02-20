@@ -1,4 +1,9 @@
 {
-  "name": "OpenG2PVerifier",
-  "displayName": "OpenG2PVerifier"
+  "name": "4Sure",
+  "displayName": "4Sure",
+  "splash": {
+    "image": "./assets/images/splash.png",
+    "resizeMode": "contain",
+    "backgroundColor": "#ffffff"
+  }
 }
