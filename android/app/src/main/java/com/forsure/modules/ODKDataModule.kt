@@ -1,4 +1,4 @@
-package com.openg2pverifier.modules
+package com.forsure.modules
 
 import android.app.Activity
 import android.content.Intent

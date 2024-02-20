@@ -1,4 +1,4 @@
-package org.openg2p.offlineverifier
+package org.openg2p.forsure
 
 import android.app.Application
 import com.facebook.react.PackageList
@@ -12,7 +12,7 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.flipper.ReactNativeFlipper
 import com.facebook.soloader.SoLoader
 
-import com.openg2pverifier.modules.ODKPackage
+import com.forsure.modules.ODKPackage
 
 class MainApplication : Application(), ReactApplication {
 

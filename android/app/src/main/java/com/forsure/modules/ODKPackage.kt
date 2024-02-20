@@ -1,4 +1,4 @@
-package com.openg2pverifier.modules
+package com.forsure.modules
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
