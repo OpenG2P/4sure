@@ -1,3 +1,3 @@
-# OpenG2P Offline VC Verifier
+# 4Sure by OpenG2P
 
-OpenG2P Offline VC Verifier
+The 4Sure App is designed to streamline the process of verifying digital credentials in a secure and efficient manner. Leveraging the power of Bluetooth Low Energy (BLE) technology, this app integrates the MOSIP (Modular Open Source Identity Platform) BLE Verifier SDK, facilitating seamless and wireless transfer of verifiable credentials (VCs). Additionally, the app is reinforced with the Biometric SDK module, which enables it to perform biometric authentication. This integration allows for accurate identity verification by using biometric data, such as facial recognition, providing an additional layer of security and trust in the verification process.

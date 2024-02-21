@@ -5,6 +5,40 @@ __metadata:
   version: 6
   cacheKey: 8
 
+"4Sure@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "4Sure@workspace:."
+  dependencies:
+    "@babel/core": ^7.20.0
+    "@babel/preset-env": ^7.20.0
+    "@babel/runtime": ^7.20.0
+    "@iriscan/biometric-sdk-react-native": ^0.2.8
+    "@mosip/ble-verifier-sdk": ^0.1.1
+    "@mosip/tuvali": ^0.4.9
+    "@react-native/babel-preset": 0.73.20
+    "@react-native/eslint-config": 0.73.2
+    "@react-native/metro-config": 0.73.4
+    "@react-native/typescript-config": 0.73.1
+    "@types/react": ^18.2.6
+    "@types/react-test-renderer": ^18.0.0
+    babel-jest: ^29.6.3
+    babel-plugin-module-resolver: ^5.0.0
+    eslint: ^8.19.0
+    jest: ^29.6.3
+    prettier: 2.8.8
+    react: 18.2.0
+    react-native: 0.73.3
+    react-native-fs: ^2.20.0
+    react-native-permissions: ^4.1.1
+    react-native-qrcode-svg: ^6.3.0
+    react-native-splash-screen: ^3.3.0
+    react-native-svg: ^14.1.0
+    react-native-vision-camera: ^3.8.2
+    react-test-renderer: 18.2.0
+    typescript: 5.0.4
+  languageName: unknown
+  linkType: soft
+
 "@aashutoshrathi/word-wrap@npm:^1.2.3":
   version: 1.2.6
   resolution: "@aashutoshrathi/word-wrap@npm:1.2.6"
@@ -2906,39 +2940,6 @@ __metadata:
   checksum: 4f656b7b4672f2ce6e272f2427d8b0824ed11546a601d8d5412b9d7704e83db38a8d9f402ecdf2b9063fc164af842ad0ec4a55819f621ed7e7ea4d1efcc74524
   languageName: node
   linkType: hard
-
-"4Sure@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "4Sure@workspace:."
-  dependencies:
-    "@babel/core": ^7.20.0
-    "@babel/preset-env": ^7.20.0
-    "@babel/runtime": ^7.20.0
-    "@iriscan/biometric-sdk-react-native": ^0.2.8
-    "@mosip/ble-verifier-sdk": ^0.1.1
-    "@mosip/tuvali": ^0.4.9
-    "@react-native/babel-preset": 0.73.20
-    "@react-native/eslint-config": 0.73.2
-    "@react-native/metro-config": 0.73.4
-    "@react-native/typescript-config": 0.73.1
-    "@types/react": ^18.2.6
-    "@types/react-test-renderer": ^18.0.0
-    babel-jest: ^29.6.3
-    babel-plugin-module-resolver: ^5.0.0
-    eslint: ^8.19.0
-    jest: ^29.6.3
-    prettier: 2.8.8
-    react: 18.2.0
-    react-native: 0.73.3
-    react-native-fs: ^2.20.0
-    react-native-permissions: ^4.1.1
-    react-native-qrcode-svg: ^6.3.0
-    react-native-svg: ^14.1.0
-    react-native-vision-camera: ^3.8.2
-    react-test-renderer: 18.2.0
-    typescript: 5.0.4
-  languageName: unknown
-  linkType: soft
 
 "abbrev@npm:^2.0.0":
   version: 2.0.0
@@ -8010,6 +8011,15 @@ __metadata:
     react-native: ">=0.63.4"
     react-native-svg: ">=13.2.0"
   checksum: 28b521084b300fef669b5743742ed78c6f8899ed8e2e31ee1ac2c908c4ce6fd44cb50d9eeb541a2326b1ff796f4d9288bca2d75e58129569f089f051142b68ff
+  languageName: node
+  linkType: hard
+
+"react-native-splash-screen@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "react-native-splash-screen@npm:3.3.0"
+  peerDependencies:
+    react-native: ">=0.57.0"
+  checksum: 14c565d5d4214f55586dcf6f7abd12d99d3e0667f67de3bda7aa24988971567b283a4187fbc0c6269c83b3c21d59d1950335c61bb0780ec2d065e20b3b9199d0
   languageName: node
   linkType: hard
 
