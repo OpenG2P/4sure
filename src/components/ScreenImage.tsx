@@ -1,8 +1,7 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, ImageSourcePropType } from "react-native";
 import theme from '@/utils/theme';
 
-// Create a button with round shape
-export function ScreenImage(props: { source: string }) {
+export function ScreenImage(props: { source: ImageSourcePropType }) {
   return (
     <View style={styles.container}>
       <Image source={props.source} style={styles.image} />

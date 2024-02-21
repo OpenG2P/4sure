@@ -4,4 +4,6 @@ export const colors = {
     textPrimary: '#FFFFFF',
     textSecondary: '#081737',
     headingText: '#152E63',
+    subHeadingText: '#666666',
+    lineColor: '#D9D9D9',
 };

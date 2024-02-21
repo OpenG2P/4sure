@@ -3,7 +3,8 @@ import { StyleSheet, Text, PermissionsAndroid, Platform, View, NativeModules } f
 import { request, PERMISSIONS, openSettings } from 'react-native-permissions';
 import { configure, faceCompare } from '@iriscan/biometric-sdk-react-native';
 import OvpBle, { useUI } from '@mosip/ble-verifier-sdk';
-import { ButtonPrimary } from './components/Button';
+import { ButtonPrimary } from '@/components';
+import SplashScreen from 'react-native-splash-screen';
 
 import CameraPage from './screens/CameraPage';
 import { QRCodeUI } from './screens/QRPage';
@@ -17,6 +18,7 @@ export default function App() {
   const {state} = useUI(ovpble);
 
   useEffect(() => {
+    SplashScreen.hide();
     requestBluetoothPermissions();
     configureBiometricSDK();
     startTransfer();
