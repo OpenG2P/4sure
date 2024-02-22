@@ -1,10 +1,9 @@
 import { StyleSheet, Text, View, Image, ImageSourcePropType } from "react-native";
-import theme from '@/utils/theme';
 
-export function ScreenImage(props: { source: ImageSourcePropType }) {
+export function ScreenImage(props: { source: ImageSourcePropType, style: any }) {
   return (
     <View style={styles.container}>
-      <Image source={props.source} style={styles.image} />
+      <Image source={props.source} style={[styles.image, props.style]} />
     </View>
   );
 }

@@ -8,8 +8,7 @@ const theme = {
     mainContainer: {
         padding: 10,
         alignItems: 'center',
-        marginBottom: 100,
-        
+        marginBottom: 60,
     },
     headingText: {
         marginTop: 60,
@@ -26,8 +25,17 @@ const theme = {
         textAlign: 'center',
         marginLeft: '15%',
         marginRight: '15%',
-        marginBottom: 40,
+        // marginBottom: 40,
         color: colors.subHeadingText,
+    },
+    camHeadingText:{
+        fontSize: 18,
+        fontWeight: '400',
+        textAlign: 'center',
+        marginLeft: '15%',
+        marginRight: '15%',
+        bottom: '30%',
+        color: colors.textPrimary,
     }
 };
 export default theme;

@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
     height: 60,
     marginLeft: '15%',
     marginRight: '15%',
+    
   },
   buttonText: {
     color: theme.colors.textSecondary,

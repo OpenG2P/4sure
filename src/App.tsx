@@ -5,9 +5,10 @@ import { configure, faceCompare } from '@iriscan/biometric-sdk-react-native';
 import OvpBle, { useUI } from '@mosip/ble-verifier-sdk';
 import { ButtonPrimary } from '@/components';
 import SplashScreen from 'react-native-splash-screen';
+import QRCode from 'react-native-qrcode-svg';
 
-import CameraPage from './screens/CameraPage';
 import { QRCodeUI } from './screens/QRPage';
+import theme from '@/utils/theme';
 
 const ovpble = new OvpBle({deviceName: "example"});
 
@@ -107,24 +108,18 @@ export default function App() {
     }
   };
 
-  const setPhoto = (photoBase64: string) => {
-    setCapturedPhoto(photoBase64);
-  };
+
 
   return (
     <View style={styles.container}>
-    {(state.name === 'Idle' || state.name === 'Disconnected') && (
-      <ButtonPrimary title={'SHOW QR CODE'} onPress={startTransfer} />
-    )}
-    {result && (
-      <View>
-        <Text style={styles.state}>Received VC</Text>
-        <Text style={styles.state}>VC ID: {result?.id}</Text>
-        {/* <Button title={'Restart'} onPress={startTransfer} /> */}
-        <CameraPage setPhoto={setPhoto} />
-        <ButtonPrimary title={'Return VC'} onPress={returnVC} />
+    {/* {(state.name === 'Idle' || state.name === 'Connected') && (
+      <>
+      <Text style={theme.headingText}>Scan this QR code using Inji Wallet App</Text>
+      <View style={theme.mainContainer}>
+        <QRCode size={200} value={(state.data as { uri: string; }).uri} />
       </View>
-    )}
+    </>
+    )} */}
     {/* {error && (
       <View>
         <Text style={styles.state}>Error In Transfer</Text>
@@ -133,7 +128,7 @@ export default function App() {
       </View>
     )} */}
 
-    <QRCodeUI state={state} />
+    <QRCodeUI state={state} transferFun={startTransfer} vcData={result} capturedPhoto={capturedPhoto} setCapturedPhoto={setCapturedPhoto}/>
   </View>
   );
 }

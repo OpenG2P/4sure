@@ -4,7 +4,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { View, Image, Text, StyleSheet, ImageSourcePropType } from 'react-native';
 
-export function Card(props: { source: string, fullName: string, idType: string, uin: string, generatedOn: string, status: string}) {
+export function Card(props: { source: any, fullName: any, idType: string, uin: string, generatedOn: string, isVerified: string}) {
+  const maskedUIN = props.uin.length > 4 ? props.uin.slice(-4) : props.uin;
+  const fullNameEng = props.fullName.find((fn: { language: string; }) => fn.language === "eng").value;
+  const generatedOnWithoutTime = props.generatedOn.split('T')[0];
   return (
     <View style={styles.cardContainer}>
       <View style={styles.infoContainer}>
@@ -14,17 +17,17 @@ export function Card(props: { source: string, fullName: string, idType: string, 
           </View>
           <View>
             <Text style={styles.topTitle}>Full Name</Text>
-            <Text style={styles.name}>John Smith</Text>
+            <Text style={styles.name}>{fullNameEng}</Text>
             <Text style={styles.topTitle}>ID Type</Text>
-            <Text style={styles.detail}>National Card</Text>
+            <Text style={styles.detail}> {props.idType === 'UIN' ? 'National Card' : props.idType} </Text>
           </View>
           </View>
           <Text style={styles.title}>UIN</Text>
-          <Text style={styles.detail}>********1269</Text>
+          <Text style={styles.detail}>******{maskedUIN}</Text>
           <View style={styles.row}>
           <View>
             <Text style={styles.title}>Generated On</Text>
-            <Text style={styles.detail}>02/19/2024</Text>
+            <Text style={styles.detail}>{generatedOnWithoutTime}</Text>
           </View>
           <View>
             <Text style={styles.statusTitle}>Status</Text>
