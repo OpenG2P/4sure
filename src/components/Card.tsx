@@ -2,11 +2,20 @@ import theme from '@/utils/theme';
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { View, Image, Text, StyleSheet, ImageSourcePropType } from 'react-native';
+import {View, Image, Text, StyleSheet, ImageSourcePropType} from 'react-native';
 
-export function Card(props: { source: any, fullName: any, idType: string, uin: string, generatedOn: string, isVerified: string}) {
+export function Card(props: {
+  source: any;
+  fullName: any;
+  idType: string;
+  uin: string;
+  generatedOn: string;
+  isVerified: string;
+}) {
   const maskedUIN = props.uin.length > 4 ? props.uin.slice(-4) : props.uin;
-  const fullNameEng = props.fullName.find((fn: { language: string; }) => fn.language === "eng").value;
+  const fullNameEng = props.fullName.find(
+    (fn: {language: string}) => fn.language === 'eng',
+  ).value;
   const generatedOnWithoutTime = props.generatedOn.split('T')[0];
   return (
     <View style={styles.cardContainer}>
@@ -19,23 +28,28 @@ export function Card(props: { source: any, fullName: any, idType: string, uin: s
             <Text style={styles.topTitle}>Full Name</Text>
             <Text style={styles.name}>{fullNameEng}</Text>
             <Text style={styles.topTitle}>ID Type</Text>
-            <Text style={styles.detail}> {props.idType === 'UIN' ? 'National Card' : props.idType} </Text>
+            <Text style={styles.detail}>
+              {' '}
+              {props.idType === 'UIN' ? 'National Card' : props.idType}{' '}
+            </Text>
           </View>
-          </View>
-          <Text style={styles.title}>UIN</Text>
-          <Text style={styles.detail}>******{maskedUIN}</Text>
-          <View style={styles.row}>
+        </View>
+        <Text style={styles.title}>UIN</Text>
+        <Text style={styles.detail}>******{maskedUIN}</Text>
+        <View style={styles.row}>
           <View>
             <Text style={styles.title}>Generated On</Text>
             <Text style={styles.detail}>{generatedOnWithoutTime}</Text>
           </View>
           <View>
             <Text style={styles.statusTitle}>Status</Text>
-            <Text style={styles.status}>Valid <Icon name="check-circle" size={16} color="green" /></Text>
+            <Text style={styles.status}>
+              Valid <Icon name="check-circle" size={16} color="green" />
+            </Text>
           </View>
-      </View>
-      <View style={styles.bottomLine} />
-      <View style={styles.bottomRectangle} />
+        </View>
+        <View style={styles.bottomLine} />
+        <View style={styles.bottomRectangle} />
       </View>
     </View>
   );
@@ -43,22 +57,22 @@ export function Card(props: { source: any, fullName: any, idType: string, uin: s
 
 const styles = StyleSheet.create({
   cardContainer: {
-    flexDirection: 'row', 
+    flexDirection: 'row',
     backgroundColor: 'white',
     borderRadius: 15,
     padding: 16,
-    shadowColor: '#000', 
-    shadowOffset: { width: 0, height: 1 },
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
-    elevation: 3, 
+    elevation: 3,
     alignItems: 'center',
     width: 300,
     marginBottom: 16,
   },
   image: {
-    width: 90, 
-    height: 90, 
+    width: 90,
+    height: 90,
     borderColor: 'black',
     borderWidth: 1,
   },
@@ -86,7 +100,6 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
     marginBottom: 8,
     fontWeight: 'bold',
-
   },
   row: {
     flexDirection: 'row',
@@ -101,7 +114,6 @@ const styles = StyleSheet.create({
     color: '#777',
     marginBottom: 4,
     marginLeft: 50,
-
   },
   status: {
     fontSize: 16,
@@ -111,13 +123,13 @@ const styles = StyleSheet.create({
     marginLeft: 50,
   },
   bottomLine: {
-    borderBottomWidth: 2, 
-    borderBottomColor: theme.colors.lineColor, 
+    borderBottomWidth: 2,
+    borderBottomColor: theme.colors.lineColor,
     marginBottom: 8,
   },
   bottomRectangle: {
-    borderBottomWidth: 12, 
+    borderBottomWidth: 12,
     width: 110,
-    borderBottomColor: theme.colors.lineColor, 
-  }
+    borderBottomColor: theme.colors.lineColor,
+  },
 });

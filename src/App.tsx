@@ -3,12 +3,9 @@ import { StyleSheet, Text, PermissionsAndroid, Platform, View, NativeModules } f
 import { request, PERMISSIONS, openSettings } from 'react-native-permissions';
 import { configure, faceCompare } from '@iriscan/biometric-sdk-react-native';
 import OvpBle, { useUI } from '@mosip/ble-verifier-sdk';
-import { ButtonPrimary } from '@/components';
 import SplashScreen from 'react-native-splash-screen';
-import QRCode from 'react-native-qrcode-svg';
 
 import { QRCodeUI } from './screens/QRPage';
-import theme from '@/utils/theme';
 
 const ovpble = new OvpBle({deviceName: "example"});
 
@@ -17,6 +14,7 @@ export default function App() {
   const [error, setError] = useState<any>(null);
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const {state} = useUI(ovpble);
+  const [isFaceVerified, setIsFaceVerified] = React.useState('unverified');
 
   useEffect(() => {
     SplashScreen.hide();
@@ -80,55 +78,53 @@ export default function App() {
 
   };
 
-  const returnVC = async () => {
+
+  const verifyFace = async () => {
     if (!result || !result.verifiableCredential || !capturedPhoto) {
       console.error('Required data is missing');
+      setIsFaceVerified('failed');
       return;
     }
-    
-    const vcPhotoBase64 = result.credential.biometrics.face;
+  
     const comparisonResult = await faceCompare(capturedPhoto, capturedPhoto);
-
+    
+  
     if (comparisonResult) {
-      const fullNameEng = result.verifiableCredential.credentialSubject.fullName.find((fn: { language: string; }) => fn.language === "eng").value;
-      const genderEng = result.verifiableCredential.credentialSubject.gender.find((g: { language: string; }) => g.language === "eng").value;
-      const dob = result.verifiableCredential.credentialSubject.dateOfBirth;
-      const uin = result.verifiableCredential.credentialSubject.UIN;
-
-      const jsonData = JSON.stringify({
-        full_name: fullNameEng,
-        gender: genderEng,
-        dob: dob,
-        uin: uin
-      });
-      console.log('Face comparison successful: The faces match for uin:',uin);
-      NativeModules.ODKDataModule.returnDataToODKCollect(jsonData);
+      console.log(comparisonResult)
+      console.log('Face comparison successful: The faces match.');
+      setIsFaceVerified('successful');
     } else {
       console.error('Face comparison failed: The faces do not match.');
+      setIsFaceVerified('failed');
     }
   };
-
-
+  
+  const returnVC = () => {
+    if (!isFaceVerified) {
+      console.error('Face verification not successful or not yet performed.');
+      return;
+    }
+  
+    const fullNameEng = result.verifiableCredential.credentialSubject.fullName.find((fn: { language: string; }) => fn.language === "eng").value;
+    const genderEng = result.verifiableCredential.credentialSubject.gender.find((g: { language: string; }) => g.language === "eng").value;
+    const dob = result.verifiableCredential.credentialSubject.dateOfBirth;
+    const uin = result.verifiableCredential.credentialSubject.UIN;
+  
+    const jsonData = JSON.stringify({
+      full_name: fullNameEng,
+      gender: genderEng,
+      dob: dob,
+      uin: uin
+    });
+  
+    console.log('Returning data for UIN:', uin);
+    NativeModules.ODKDataModule.returnDataToODKCollect(jsonData);
+  };
+  
 
   return (
     <View style={styles.container}>
-    {/* {(state.name === 'Idle' || state.name === 'Connected') && (
-      <>
-      <Text style={theme.headingText}>Scan this QR code using Inji Wallet App</Text>
-      <View style={theme.mainContainer}>
-        <QRCode size={200} value={(state.data as { uri: string; }).uri} />
-      </View>
-    </>
-    )} */}
-    {/* {error && (
-      <View>
-        <Text style={styles.state}>Error In Transfer</Text>
-        <Text style={styles.state}>error: {JSON.stringify(error)}</Text>
-        <ButtonPrimary title={'Restart'} onPress={startTransfer} />
-      </View>
-    )} */}
-
-    <QRCodeUI state={state} transferFun={startTransfer} vcData={result} capturedPhoto={capturedPhoto} setCapturedPhoto={setCapturedPhoto}/>
+    <QRCodeUI state={state} setVCData={setResult} ovpble={ovpble} setIsFaceVerified={setIsFaceVerified} returnVC={returnVC} isFaceVerified={isFaceVerified} verifyFace={verifyFace} transferFun={startTransfer} vcData={result} capturedPhoto={capturedPhoto} setCapturedPhoto={setCapturedPhoto}/>
   </View>
   );
 }
