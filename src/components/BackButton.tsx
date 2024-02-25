@@ -22,9 +22,9 @@ export function BackButton(props: {
 
 const styles = StyleSheet.create({
   image: {
-    position: 'absolute',
-    left: 100,
     width: 45,
     height: 45,
+    marginTop: 15,
+    marginLeft: 20,
   },
 });

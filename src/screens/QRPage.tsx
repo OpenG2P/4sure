@@ -7,6 +7,7 @@ import {
   ScreenImage,
   Card,
   BackButton,
+  LinkedText,
 } from '@/components';
 import QRCode from 'react-native-qrcode-svg';
 import {IntermediateState} from '@mosip/ble-verifier-sdk';
@@ -40,6 +41,7 @@ export function QRCodeUI(props: {
     setIsReadyToCapture(true);
     props.setIsFaceVerified('unverified');
     props.transferFun();
+    console.log('Restarting the process', props.state.name);
   };
   const [isReadyToCapture, setIsReadyToCapture] = React.useState(false);
   const [photoPath, setPhotoPath] = React.useState('');
@@ -96,6 +98,11 @@ export function QRCodeUI(props: {
       {(props.state.name === 'SecureConnectionEstablished' ||
         props.state.name === 'Connected') && (
         <>
+          <BackButton
+            style={{position: 'relative', top: -30}}
+            source={require('../../assets/images/back.png')}
+            onPress={restartProcess}
+          />
           <Text style={theme.headingText}>
             Waiting for beneficiary to share the VC
           </Text>
@@ -115,7 +122,7 @@ export function QRCodeUI(props: {
       {props.vcData && !isReadyToCapture && !photoPath && (
         <>
           <BackButton
-            style={{position: 'absolute', top: 20, left: 0}}
+            style={{position: 'relative', top: 10, right: 0}}
             source={require('../../assets/images/back.png')}
             onPress={() => capturePhoto()}
           />
@@ -152,7 +159,7 @@ export function QRCodeUI(props: {
       {props.vcData && photoPath && props.isFaceVerified === 'unverified' && (
         <>
           <BackButton
-            style={{position: 'absolute', top: 20, left: 0}}
+            style={{position: 'absolute', top: 200, left: 0}}
             source={require('../../assets/images/back.png')}
             onPress={() => capturePhoto()}
           />
@@ -233,6 +240,11 @@ export function QRCodeUI(props: {
                 onPress={() => restartProcess()}
               />
             </View>
+            <LinkedText
+              onPress={props.returnVC}
+              style={null}
+              text={'Submit Without Verification'}
+            />
           </View>
         </>
       )}

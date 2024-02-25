@@ -34,7 +34,6 @@ export default function CameraPage({
   }
 
   const goBack = () => {
-    console.log('Going back');
     setIsReadyToCapture(false);
     setPhotoPath('');
   };
@@ -62,33 +61,35 @@ export default function CameraPage({
     );
 
   return (
-    <SafeAreaView style={theme.container}>
+    <SafeAreaView style={{flex: 1}}>
       {cameraPermission === 'granted' && (
         <>
-          <Camera
-            key={cameraKey}
-            ref={cameraRef}
-            style={theme.preview}
-            device={device}
-            isActive={true}
-            photo={true}
-          />
-          <BackButton
-            style={{position: 'absolute', top: 20, left: -50}}
-            source={require('../../assets/images/back.png')}
-            onPress={goBack}
-          />
-          <View style={theme.overlayContainer}>
-            <View style={theme.mainContainer}>
-              <Text style={theme.camHeadingText}>
-                Position the face in the frame
-              </Text>
-              <View style={theme.visualGuide} />
-              <ButtonPrimary
-                style={null}
-                title="CAPTURE"
-                onPress={takePicture}
-              />
+          <View style={theme.container}>
+            <Camera
+              key={cameraKey}
+              ref={cameraRef}
+              style={theme.preview}
+              device={device}
+              isActive={true}
+              photo={true}
+            />
+            <BackButton
+              style={{position: 'absolute', top: 20, left: 20}}
+              source={require('../../assets/images/back.png')}
+              onPress={goBack}
+            />
+            <View style={theme.overlayContainer}>
+              <View style={theme.mainContainer}>
+                <Text style={theme.camHeadingText}>
+                  Position the face in the frame
+                </Text>
+                <View style={theme.visualGuide} />
+                <ButtonPrimary
+                  style={null}
+                  title="CAPTURE"
+                  onPress={takePicture}
+                />
+              </View>
             </View>
           </View>
         </>
