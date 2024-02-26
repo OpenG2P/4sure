@@ -42,6 +42,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     props.ovpble.stopTransfer();
     setPhotoPath('');
     setIsReadyToCapture(false);
+    setVcPhotoPath('');
     props.setIsFaceVerified('unverified');
     props.transferFun();
     console.log('Restarting the process', isReadyToCapture, !vcData);
@@ -62,7 +63,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     RNFS.writeFile(path, vcPhotoBase64, 'base64')
       .then(() => {
         console.log('File written to:', path);
-        setVcPhotoPath(path); // Assuming setVcPhotoPath updates state correctly
+        setVcPhotoPath(path);
       })
       .catch(err => {
         console.error('Error writing file:', err.message);
@@ -84,6 +85,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
         <VCDetailsScreen
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
+          onBack={restartProcess}
           onCapturePhoto={() => setIsReadyToCapture(true)}
         />
       );
@@ -110,6 +112,10 @@ const MainScreen: React.FC<MainScreenProps> = props => {
             setIsReadyToCapture(true);
           }}
           onVerify={props.verifyFace}
+          onBack={() => {
+            setPhotoPath('');
+            setIsReadyToCapture(true);
+          }}
         />
       );
     } else if (vcData && isFaceVerified === 'successful') {
