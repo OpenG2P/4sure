@@ -1,21 +1,27 @@
 // VerificationPreviewScreen.tsx
 import React from 'react';
 import {View, Text, Image, SafeAreaView, StyleSheet} from 'react-native';
-import {ButtonSecondary, ButtonPrimary} from '@/components';
+import {ButtonSecondary, BackButton, ButtonPrimary} from '@/components';
 import theme from '@/utils/theme';
 
 interface VerificationPreviewScreenProps {
   photoPath: string;
   onRetake: () => void;
   onVerify: () => void;
+  onBack: () => void;
 }
 
 export const VerificationPreviewScreen: React.FC<
   VerificationPreviewScreenProps
-> = ({photoPath, onRetake, onVerify}) => {
+> = ({photoPath, onRetake, onVerify, onBack}) => {
   console.log('Photo path:', photoPath);
   return (
     <SafeAreaView style={styles.container}>
+      <BackButton
+        style={styles.backButtonStyle}
+        source={require('../../assets/images/back.png')}
+        onPress={onBack}
+      />
       <View style={styles.textContainer}>
         <Text style={theme.headingText}>Preview</Text>
         <Text style={theme.subHeadingText}>
@@ -40,14 +46,19 @@ export const VerificationPreviewScreen: React.FC<
 };
 
 const styles = StyleSheet.create({
-  textContainer: {
-    marginTop: 40,
-  },
   container: {
     flex: 1,
     alignItems: 'center',
-    marginTop: 50,
   },
+  backButtonStyle: {
+    position: 'absolute',
+    top: 55,
+    right: 110,
+  },
+  textContainer: {
+    marginTop: 70,
+  },
+
   imageStyle: {
     width: '100%',
     height: 300,
