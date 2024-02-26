@@ -1,13 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, PermissionsAndroid, Platform, View, NativeModules } from 'react-native';
-import { request, PERMISSIONS, openSettings } from 'react-native-permissions';
-import { configure, faceCompare } from '@iriscan/biometric-sdk-react-native';
-import OvpBle, { useUI } from '@mosip/ble-verifier-sdk';
+import React, {useState, useEffect} from 'react';
+import {
+  StyleSheet,
+  Text,
+  PermissionsAndroid,
+  Platform,
+  View,
+  NativeModules,
+} from 'react-native';
+import {request, PERMISSIONS, openSettings} from 'react-native-permissions';
+import {configure, faceCompare} from '@iriscan/biometric-sdk-react-native';
+import OvpBle, {useUI} from '@mosip/ble-verifier-sdk';
 import SplashScreen from 'react-native-splash-screen';
 
-import { QRCodeUI } from './screens/QRPage';
+import MainScreen from './screens/MainScreen';
 
-const ovpble = new OvpBle({deviceName: "example"});
+const ovpble = new OvpBle({deviceName: 'example'});
 
 export default function App() {
   const [result, setResult] = useState<any>('');
@@ -28,8 +35,12 @@ export default function App() {
       await request(PERMISSIONS.ANDROID.BLUETOOTH_ADVERTISE);
       await request(PERMISSIONS.ANDROID.BLUETOOTH_CONNECT);
     } else if (Platform.OS === 'android') {
-      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.BLUETOOTH);
-      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN);
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH,
+      );
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN,
+      );
     }
   }
 
@@ -42,7 +53,8 @@ export default function App() {
             inputWidth: 160,
             inputHeight: 160,
             outputLength: 512,
-            modelChecksum: '797b4d99794965749635352d55da38d4748c28c659ee1502338badee4614ed06',
+            modelChecksum:
+              '797b4d99794965749635352d55da38d4748c28c659ee1502338badee4614ed06',
           },
         },
         matcher: {
@@ -55,7 +67,8 @@ export default function App() {
             inputHeight: 224,
             // 0.0 - real, 1.0 - spoof
             threshold: 0.5,
-            modelChecksum: "797b4d99794965749635352d55da38d4748c28c659ee1502338badee4614ed06",
+            modelChecksum:
+              '797b4d99794965749635352d55da38d4748c28c659ee1502338badee4614ed06',
           },
         },
       },
@@ -67,17 +80,16 @@ export default function App() {
     setResult('');
     setError(null);
 
-    ovpble.startTransfer()
-      .then((vc) => {
+    ovpble
+      .startTransfer()
+      .then(vc => {
         setResult(JSON.parse(vc));
         // console.log("VC_DEBUG", JSON.parse(vc))
       })
-      .catch((err) => {
+      .catch(err => {
         setError(err);
       });
-
   };
-
 
   const verifyFace = async () => {
     if (!result || !result.verifiableCredential || !capturedPhoto) {
@@ -85,12 +97,11 @@ export default function App() {
       setIsFaceVerified('failed');
       return;
     }
-  
+
     const comparisonResult = await faceCompare(capturedPhoto, capturedPhoto);
-    
-  
+
     if (comparisonResult) {
-      console.log(comparisonResult)
+      console.log(comparisonResult);
       console.log('Face comparison successful: The faces match.');
       setIsFaceVerified('successful');
     } else {
@@ -98,34 +109,50 @@ export default function App() {
       setIsFaceVerified('failed');
     }
   };
-  
+
   const returnVC = () => {
     if (!isFaceVerified) {
       console.error('Face verification not successful or not yet performed.');
       return;
     }
-  
-    const fullNameEng = result.verifiableCredential.credentialSubject.fullName.find((fn: { language: string; }) => fn.language === "eng").value;
-    const genderEng = result.verifiableCredential.credentialSubject.gender.find((g: { language: string; }) => g.language === "eng").value;
+
+    const fullNameEng =
+      result.verifiableCredential.credentialSubject.fullName.find(
+        (fn: {language: string}) => fn.language === 'eng',
+      ).value;
+    const genderEng = result.verifiableCredential.credentialSubject.gender.find(
+      (g: {language: string}) => g.language === 'eng',
+    ).value;
     const dob = result.verifiableCredential.credentialSubject.dateOfBirth;
     const uin = result.verifiableCredential.credentialSubject.UIN;
-  
+
     const jsonData = JSON.stringify({
       full_name: fullNameEng,
       gender: genderEng,
       dob: dob,
-      uin: uin
+      uin: uin,
     });
-  
+
     console.log('Returning data for UIN:', uin);
     NativeModules.ODKDataModule.returnDataToODKCollect(jsonData);
   };
-  
 
   return (
     <View style={styles.container}>
-    <QRCodeUI state={state} setVCData={setResult} ovpble={ovpble} setIsFaceVerified={setIsFaceVerified} returnVC={returnVC} isFaceVerified={isFaceVerified} verifyFace={verifyFace} transferFun={startTransfer} vcData={result} capturedPhoto={capturedPhoto} setCapturedPhoto={setCapturedPhoto}/>
-  </View>
+      <MainScreen
+        state={state}
+        setVCData={setResult}
+        ovpble={ovpble}
+        setIsFaceVerified={setIsFaceVerified}
+        returnVC={returnVC}
+        isFaceVerified={isFaceVerified}
+        verifyFace={verifyFace}
+        transferFun={startTransfer}
+        vcData={result}
+        capturedPhoto={capturedPhoto}
+        setCapturedPhoto={setCapturedPhoto}
+      />
+    </View>
   );
 }
 

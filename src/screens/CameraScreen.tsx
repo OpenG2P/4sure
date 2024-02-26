@@ -6,15 +6,17 @@ import {Camera, useCameraDevice} from 'react-native-vision-camera';
 import {request, PERMISSIONS, openSettings} from 'react-native-permissions';
 import RNFS from 'react-native-fs';
 
-export default function CameraPage({
-  setPhoto,
-  setIsReadyToCapture,
-  setPhotoPath,
-}: {
+interface CameraScreenProps {
   setPhoto: any;
   setIsReadyToCapture: any;
   setPhotoPath: any;
-}) {
+}
+
+export const CameraScreen: React.FC<CameraScreenProps> = ({
+  setPhoto,
+  setIsReadyToCapture,
+  setPhotoPath,
+}) => {
   const [cameraPermission, setCameraPermission] = useState('denied');
   const device = useCameraDevice('back');
   const cameraRef = useRef<Camera>(null);
@@ -55,7 +57,7 @@ export default function CameraPage({
 
   if (!device)
     return (
-      <View style={theme.container}>
+      <View style={styles.container}>
         <Text>Camera not available</Text>
       </View>
     );
@@ -64,28 +66,28 @@ export default function CameraPage({
     <SafeAreaView style={{flex: 1}}>
       {cameraPermission === 'granted' && (
         <>
-          <View style={theme.container}>
+          <View style={styles.container}>
             <Camera
               key={cameraKey}
               ref={cameraRef}
-              style={theme.preview}
+              style={styles.preview}
               device={device}
               isActive={true}
               photo={true}
             />
             <BackButton
-              style={{position: 'absolute', top: 20, left: 20}}
+              style={styles.backButtonStyle}
               source={require('../../assets/images/back.png')}
               onPress={goBack}
             />
-            <View style={theme.overlayContainer}>
-              <View style={theme.mainContainer}>
-                <Text style={theme.camHeadingText}>
+            <View style={styles.overlayContainer}>
+              <View style={styles.mainContainer}>
+                <Text style={styles.camHeadingText}>
                   Position the face in the frame
                 </Text>
-                <View style={theme.visualGuide} />
+                <View style={styles.visualGuide} />
                 <ButtonPrimary
-                  style={null}
+                  style={{marginBottom: 10}}
                   title="CAPTURE"
                   onPress={takePicture}
                 />
@@ -96,4 +98,56 @@ export default function CameraPage({
       )}
     </SafeAreaView>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  backButtonStyle: {
+    position: 'absolute',
+    bottom: 300,
+    right: 110,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  mainContainer: {
+    padding: 10,
+    alignItems: 'center',
+    marginBottom: 60,
+  },
+  camHeadingText: {
+    fontSize: 18,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginLeft: '15%',
+    marginRight: '15%',
+    bottom: '30%',
+    color: theme.colors.textPrimary,
+  },
+  overlayContainer: {
+    position: 'relative',
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    left: 0,
+    right: 0,
+    bottom: 30,
+  },
+  visualGuide: {
+    width: 300,
+    height: 330,
+    borderWidth: 1,
+    borderColor: '#24bb06',
+    borderRadius: 10,
+    bottom: '25%',
+  },
+  preview: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+});

@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
     padding: 15,
     width: 280,
     height: 60,
-    marginLeft: '15%',
-    marginRight: '15%',
+    // marginLeft: '15%',
+    // marginRight: '15%',
   },
   buttonText: {
     color: theme.colors.textSecondary,
@@ -59,8 +59,8 @@ const secondaryStyles = StyleSheet.create({
     padding: 15,
     width: 280,
     height: 60,
-    marginLeft: '15%',
-    marginRight: '15%',
+    // marginLeft: '15%',
+    // marginRight: '15%',
   },
   buttonText: {
     color: theme.colors.textPrimary,
