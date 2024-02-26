@@ -2,7 +2,7 @@ import theme from '@/utils/theme';
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import {View, Image, Text, StyleSheet, ImageSourcePropType} from 'react-native';
+import {View, Image, Text, StyleSheet} from 'react-native';
 
 export function Card(props: {
   source: any;
@@ -68,7 +68,8 @@ const styles = StyleSheet.create({
     elevation: 3,
     alignItems: 'center',
     width: 300,
-    marginBottom: 16,
+    marginBottom: 0,
+    marginTop: 50,
   },
   image: {
     width: 90,
