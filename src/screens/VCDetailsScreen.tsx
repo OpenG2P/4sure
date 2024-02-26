@@ -1,21 +1,28 @@
 import React from 'react';
 import {View, Text, SafeAreaView, StyleSheet, Image} from 'react-native';
-import {ButtonPrimary, Card} from '@/components';
+import {ButtonPrimary, Card, BackButton} from '@/components';
 import theme from '@/utils/theme';
 
 interface VCDetailsScreenProps {
   vcData: any;
   vcPhotoPath: string;
   onCapturePhoto: () => void;
+  onBack: () => void;
 }
 
 export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
   vcData,
   vcPhotoPath,
   onCapturePhoto,
+  onBack,
 }) => {
   return (
     <SafeAreaView style={styles.container}>
+      <BackButton
+        style={styles.backButtonStyle}
+        source={require('../../assets/images/back.png')}
+        onPress={onBack}
+      />
       <View style={styles.detailsContainer}>
         <Text style={theme.headingText}>VC Details</Text>
         <Text style={theme.subHeadingText}>
@@ -42,11 +49,16 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    top: 100,
+  },
+  backButtonStyle: {
+    position: 'relative',
+    bottom: 43,
+    right: 25,
   },
   detailsContainer: {
     alignItems: 'center',
-    marginTop: 50,
+    marginBottom: 30,
   },
   imageStyle: {
     width: 100,
