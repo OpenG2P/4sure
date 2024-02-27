@@ -1,6 +1,11 @@
 import React from 'react';
-import {View, Text, SafeAreaView, StyleSheet, Image} from 'react-native';
-import {NationalCard, BeneficiaryCard, BackButton} from '@/components';
+import {View, Text, SafeAreaView, StyleSheet} from 'react-native';
+import {
+  NationalCard,
+  BeneficiaryCard,
+  ButtonPrimary,
+  BackButton,
+} from '@/components';
 import theme from '@/utils/theme';
 
 interface VCDetailsScreenProps {
@@ -13,6 +18,7 @@ interface VCDetailsScreenProps {
   onBeneficiaryIDClick: () => void;
   onCapturePhoto: () => void;
   onBack: () => void;
+  setIsCardValid: (state: string) => void;
 }
 
 export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
@@ -24,8 +30,21 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
   onNationalIDClick,
   onBeneficiaryIDClick,
   onCapturePhoto,
+  setIsCardValid,
   onBack,
 }) => {
+  const validateCards = () => {
+    console.log('Validating both the cards UIN');
+    if (
+      vcData?.id ===
+      beneficiaryVCData?.verifiableCredential?.credential?.credentialSubject
+        ?.UIN
+    ) {
+      setIsCardValid('valid');
+    } else {
+      setIsCardValid('invalid');
+    }
+  };
   return (
     <SafeAreaView style={styles.container}>
       <BackButton
@@ -51,18 +70,26 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
         />
         <BeneficiaryCard
           source={{uri: 'file://' + beneficiaryVCPhotoPath}}
-          fullName={beneficiaryVCData?.credential?.fullName}
+          fullName={
+            beneficiaryVCData?.verifiableCredential?.credential
+              ?.credentialSubject?.fullName?.[0]?.value
+          }
           isVerified={beneficiaryVCData?.isVerified}
-          uin={beneficiaryVCData?.id}
-          idType={beneficiaryVCData?.idType}
+          uin={
+            beneficiaryVCData?.verifiableCredential?.credential
+              ?.credentialSubject?.UIN
+          }
+          idType={'Beneficiary Card'}
           generatedOn={beneficiaryVCData?.generatedOn}
           onPress={onBeneficiaryIDClick}
         />
-        {/* <ButtonPrimary
-          title="CAPTURE PHOTO"
-          onPress={onCapturePhoto}
-          style={styles.buttonStyle}
-        /> */}
+        {isIdVerified && beneficiaryVCPhotoPath && (
+          <ButtonPrimary
+            title="VALIDATE"
+            onPress={validateCards}
+            style={styles.buttonStyle}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -71,11 +98,12 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    top: 50,
+    top: 10,
   },
   backButtonStyle: {
     position: 'relative',
-    bottom: 10,
+    bottom: 0,
+    top: 40,
     right: 25,
   },
   detailsContainer: {
