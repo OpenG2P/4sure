@@ -10,12 +10,14 @@ interface CameraScreenProps {
   setPhoto: any;
   setIsReadyToCapture: any;
   setPhotoPath: any;
+  restartProcess: any;
 }
 
 export const CameraScreen: React.FC<CameraScreenProps> = ({
   setPhoto,
   setIsReadyToCapture,
   setPhotoPath,
+  restartProcess,
 }) => {
   const [cameraPermission, setCameraPermission] = useState('denied');
   const device = useCameraDevice('back');
@@ -38,6 +40,7 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({
   const goBack = () => {
     setIsReadyToCapture(false);
     setPhotoPath('');
+    restartProcess();
   };
 
   const takePicture = async () => {
