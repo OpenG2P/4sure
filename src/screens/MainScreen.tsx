@@ -13,29 +13,40 @@ import RNFS from 'react-native-fs';
 
 interface MainScreenProps {
   setVCData: any;
+  setBeneficiaryVCData: any;
   ovpble: any;
   setIsFaceVerified: any;
   returnVC: any;
   isFaceVerified: string;
   state: any; // Adjust the type according to your state management
-  transferFun: any;
+  startNationalIDTransfer: any;
+  startBeneficiaryIDTransfer: any;
   vcData: any;
   capturedPhoto: any;
   verifyFace: any;
   setCapturedPhoto: any;
+  beneficiaryVCData: any;
 }
 
 const MainScreen: React.FC<MainScreenProps> = props => {
   const [isReadyToCapture, setIsReadyToCapture] = useState(false);
   const [photoPath, setPhotoPath] = useState('');
   const [vcPhotoPath, setVcPhotoPath] = useState('');
-  const {state, vcData, isFaceVerified} = props;
+  const [beneficiaryVCPhotoPath, setBeneficiaryVCPhotoPath] = useState('');
+
+  const {state, vcData, beneficiaryVCData, isFaceVerified} = props;
 
   useEffect(() => {
     if (vcData && !vcPhotoPath) {
       setVCPhoto();
     }
   }, [vcData, vcPhotoPath]);
+
+  useEffect(() => {
+    if (beneficiaryVCData && !beneficiaryVCPhotoPath) {
+      setBeneficiaryVCPhoto();
+    }
+  }, [beneficiaryVCData, beneficiaryVCPhotoPath]);
 
   const restartProcess = () => {
     props.setVCData(null);
@@ -44,13 +55,13 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     setIsReadyToCapture(false);
     setVcPhotoPath('');
     props.setIsFaceVerified('unverified');
-    props.transferFun();
+    props.startNationalIDTransfer();
     console.log('Restarting the process', isReadyToCapture, !vcData);
   };
 
   const setVCPhoto = () => {
     console.log('VC Data Captured');
-    let vcPhotoBase64 = props.vcData.credential.biometrics.face;
+    let vcPhotoBase64 = props?.vcData?.credential?.biometrics.face;
 
     // Remove data URL scheme if present
     const base64Pattern = /^data:image\/[a-z]+;base64,/;
@@ -70,8 +81,51 @@ const MainScreen: React.FC<MainScreenProps> = props => {
       });
   };
 
+  const setBeneficiaryVCPhoto = () => {
+    console.log('Beneficiary VC Data Captured');
+    let beneficiaryVCPhotoBase64 = props?.vcData?.credential?.biometrics.face;
+
+    // Remove data URL scheme if present
+    const base64Pattern = /^data:image\/[a-z]+;base64,/;
+    if (beneficiaryVCPhotoBase64.match(base64Pattern)) {
+      beneficiaryVCPhotoBase64 = beneficiaryVCPhotoBase64.replace(
+        base64Pattern,
+        '',
+      );
+    }
+
+    const path = RNFS.TemporaryDirectoryPath + '/beneficiary_face.jpg';
+
+    RNFS.writeFile(path, beneficiaryVCPhotoBase64, 'base64')
+      .then(() => {
+        console.log('File written to:', path);
+        setBeneficiaryVCPhotoPath(path);
+      })
+      .catch(err => {
+        console.error('Error writing file:', err.message);
+      });
+  };
+
   const renderContent = () => {
-    if (state.name === 'Advertising') {
+    if (!vcData && !isReadyToCapture && !photoPath && state.name === 'Idle') {
+      return (
+        <VCDetailsScreen
+          beneficiaryVCData={beneficiaryVCData}
+          beneficiaryVCPhotoPath={beneficiaryVCPhotoPath}
+          isIdVerified={false}
+          vcData={vcData}
+          vcPhotoPath={vcPhotoPath}
+          onBack={() => {
+            null;
+          }}
+          onCapturePhoto={() => {
+            null;
+          }}
+          onNationalIDClick={props.startNationalIDTransfer}
+          onBeneficiaryIDClick={props.startNationalIDTransfer}
+        />
+      );
+    } else if (state.name === 'Advertising') {
       return <QRCodeDisplayScreen uri={state.data.uri} />;
     } else if (
       state.name === 'SecureConnectionEstablished' ||
@@ -83,10 +137,19 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     } else if (vcData && !isReadyToCapture && !photoPath) {
       return (
         <VCDetailsScreen
+          beneficiaryVCData={beneficiaryVCData}
+          beneficiaryVCPhotoPath={beneficiaryVCPhotoPath}
+          isIdVerified={false}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
           onBack={restartProcess}
           onCapturePhoto={() => setIsReadyToCapture(true)}
+          onNationalIDClick={() => {
+            null;
+          }}
+          onBeneficiaryIDClick={() => {
+            null;
+          }}
         />
       );
     } else if (vcData && isReadyToCapture && !photoPath) {
@@ -119,7 +182,24 @@ const MainScreen: React.FC<MainScreenProps> = props => {
         />
       );
     } else if (vcData && isFaceVerified === 'successful') {
-      return <VerificationSuccessScreen onSubmit={props.returnVC} />;
+      return (
+        <VCDetailsScreen
+          beneficiaryVCData={beneficiaryVCData}
+          beneficiaryVCPhotoPath={beneficiaryVCPhotoPath}
+          isIdVerified={true}
+          vcData={vcData}
+          vcPhotoPath={vcPhotoPath}
+          onBack={restartProcess}
+          onCapturePhoto={() => setIsReadyToCapture(true)}
+          onNationalIDClick={() => {
+            null;
+          }}
+          onBeneficiaryIDClick={() => {
+            null;
+          }}
+        />
+      );
+      // return <VerificationSuccessScreen onSubmit={props.returnVC} />;
     } else if (vcData && isFaceVerified === 'failed') {
       return (
         <VerificationFailureScreen

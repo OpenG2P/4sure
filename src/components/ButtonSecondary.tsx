@@ -2,24 +2,24 @@ import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import theme from '@/utils/theme';
 
 // Create a button with round shape
-export function ButtonPrimary(props: {
+export function ButtonSecondary(props: {
   style: any;
   title: string;
   onPress: () => void;
 }) {
   return (
     <TouchableOpacity
-      style={[styles.button, props.style]}
+      style={[secondaryStyles.button, props.style]}
       onPress={props.onPress}
       activeOpacity={0.7}>
-      <Text style={styles.buttonText}>{props.title}</Text>
+      <Text style={secondaryStyles.buttonText}>{props.title}</Text>
     </TouchableOpacity>
   );
 }
 
-const styles = StyleSheet.create({
+const secondaryStyles = StyleSheet.create({
   button: {
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: theme.colors.primary,
     borderRadius: 30,
     padding: 15,
     width: 280,
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     // marginRight: '15%',
   },
   buttonText: {
-    color: theme.colors.textSecondary,
+    color: theme.colors.textPrimary,
     fontSize: 20,
     fontFamily: theme.fontFamily,
     fontWeight: 'bold',
