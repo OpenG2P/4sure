@@ -33,6 +33,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
   const [photoPath, setPhotoPath] = useState('');
   const [vcPhotoPath, setVcPhotoPath] = useState('');
   const [beneficiaryVCPhotoPath, setBeneficiaryVCPhotoPath] = useState('');
+  const [isCardValid, setIsCardValid] = useState('unverified');
 
   const {state, vcData, beneficiaryVCData, isFaceVerified} = props;
 
@@ -56,7 +57,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     setVcPhotoPath('');
     props.setIsFaceVerified('unverified');
     props.startNationalIDTransfer();
-    console.log('Restarting the process', isReadyToCapture, !vcData);
+    setIsCardValid('unverified');
   };
 
   const setVCPhoto = () => {
@@ -83,7 +84,9 @@ const MainScreen: React.FC<MainScreenProps> = props => {
 
   const setBeneficiaryVCPhoto = () => {
     console.log('Beneficiary VC Data Captured');
-    let beneficiaryVCPhotoBase64 = props?.vcData?.credential?.biometrics.face;
+    let beneficiaryVCPhotoBase64 =
+      props?.beneficiaryVCData?.verifiableCredential?.credential
+        ?.credentialSubject?.face;
 
     // Remove data URL scheme if present
     const base64Pattern = /^data:image\/[a-z]+;base64,/;
@@ -112,6 +115,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
         <VCDetailsScreen
           beneficiaryVCData={beneficiaryVCData}
           beneficiaryVCPhotoPath={beneficiaryVCPhotoPath}
+          setIsCardValid={setIsCardValid}
           isIdVerified={false}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
@@ -122,7 +126,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
             null;
           }}
           onNationalIDClick={props.startNationalIDTransfer}
-          onBeneficiaryIDClick={props.startNationalIDTransfer}
+          onBeneficiaryIDClick={props.startBeneficiaryIDTransfer}
         />
       );
     } else if (state.name === 'Advertising') {
@@ -139,6 +143,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
         <VCDetailsScreen
           beneficiaryVCData={beneficiaryVCData}
           beneficiaryVCPhotoPath={beneficiaryVCPhotoPath}
+          setIsCardValid={setIsCardValid}
           isIdVerified={false}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
@@ -160,13 +165,12 @@ const MainScreen: React.FC<MainScreenProps> = props => {
             setPhotoPath(path);
             console.log('Photo captured:', path);
           }}
+          restartProcess={restartProcess}
           setIsReadyToCapture={setIsReadyToCapture}
           setPhotoPath={setPhotoPath}
         />
       );
     } else if (vcData && photoPath && isFaceVerified === 'unverified') {
-      console.log('Verifying face...');
-      console.log('Captured photo:', photoPath);
       return (
         <VerificationPreviewScreen
           photoPath={photoPath}
@@ -181,11 +185,16 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           }}
         />
       );
-    } else if (vcData && isFaceVerified === 'successful') {
+    } else if (
+      vcData &&
+      isFaceVerified === 'successful' &&
+      isCardValid === 'unverified'
+    ) {
       return (
         <VCDetailsScreen
           beneficiaryVCData={beneficiaryVCData}
           beneficiaryVCPhotoPath={beneficiaryVCPhotoPath}
+          setIsCardValid={setIsCardValid}
           isIdVerified={true}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
@@ -194,18 +203,30 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           onNationalIDClick={() => {
             null;
           }}
-          onBeneficiaryIDClick={() => {
-            null;
-          }}
+          onBeneficiaryIDClick={props.startBeneficiaryIDTransfer}
         />
       );
-      // return <VerificationSuccessScreen onSubmit={props.returnVC} />;
     } else if (vcData && isFaceVerified === 'failed') {
       return (
         <VerificationFailureScreen
+          textData="Sorry! We couldn’t verify your photo. Please try again."
           onRetry={() => {
             setPhotoPath('');
             setIsReadyToCapture(true);
+          }}
+          onSubmitWithoutVerification={props.returnVC}
+        />
+      );
+    } else if (isCardValid === 'valid') {
+      return <VerificationSuccessScreen onSubmit={props.returnVC} />;
+    } else if (isCardValid === 'invalid') {
+      return (
+        <VerificationFailureScreen
+          textData="Sorry! The UINs do not match"
+          onRetry={() => {
+            setIsCardValid('unverified');
+            setBeneficiaryVCPhotoPath('');
+            props.setBeneficiaryVCData(null);
           }}
           onSubmitWithoutVerification={props.returnVC}
         />
