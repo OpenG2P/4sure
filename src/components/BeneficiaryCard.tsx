@@ -14,13 +14,9 @@ export function BeneficiaryCard(props: {
   onPress: () => void;
 }) {
   var maskedUIN = '';
-  var fullNameEng = '';
   var generatedOnWithoutTime = '';
   if (props.fullName) {
     maskedUIN = props.uin.length > 4 ? props.uin.slice(-4) : props.uin;
-    fullNameEng = props.fullName.find(
-      (fn: {language: string}) => fn.language === 'eng',
-    ).value;
     generatedOnWithoutTime = props.generatedOn.split('T')[0];
     return (
       <View style={styles.cardContainer}>
@@ -31,16 +27,17 @@ export function BeneficiaryCard(props: {
             </View>
             <View>
               <Text style={styles.topTitle}>Full Name</Text>
-              <Text style={styles.name}>{fullNameEng}</Text>
+              <Text style={styles.name}>{props.fullName}</Text>
               <Text style={styles.topTitle}>ID Type</Text>
               <Text style={styles.detail}>
-                {' '}
                 {props.idType === 'UIN' ? 'National Card' : props.idType}{' '}
               </Text>
             </View>
           </View>
           <Text style={styles.title}>UIN</Text>
-          <Text style={styles.detail}>******{maskedUIN}</Text>
+          <Text style={[styles.detail, {color: theme.colors.textTertiary}]}>
+            ******{maskedUIN}
+          </Text>
           <View style={styles.row}>
             <View>
               <Text style={styles.title}>Generated On</Text>
@@ -54,7 +51,8 @@ export function BeneficiaryCard(props: {
             </View>
           </View>
           <View style={styles.bottomLine} />
-          <View style={styles.bottomRectangle} />
+          <Text style={styles.title}>Program Name</Text>
+          <Text style={styles.programDetail}>National Beneficiary Program</Text>
         </View>
       </View>
     );
@@ -145,8 +143,8 @@ const styles = StyleSheet.create({
   image: {
     width: 90,
     height: 90,
-    borderColor: 'black',
-    borderWidth: 1,
+    marginRight: 6,
+    borderRadius: 6,
   },
   infoContainer: {
     flex: 1,
@@ -155,23 +153,29 @@ const styles = StyleSheet.create({
   topTitle: {
     fontSize: 14,
     color: '#777',
-    marginRight: 90,
+    marginRight: 0,
   },
   title: {
     fontSize: 14,
     color: '#777',
   },
   name: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000',
+    fontSize: 17,
+    fontWeight: '500',
+    color: theme.colors.textTertiary,
     marginBottom: 8,
   },
   detail: {
     fontSize: 16,
     color: theme.colors.textSecondary,
     marginBottom: 8,
-    fontWeight: 'bold',
+    fontWeight: '500',
+  },
+  programDetail: {
+    fontSize: 16,
+    color: theme.colors.textSecondary,
+    marginBottom: 0,
+    fontWeight: '500',
   },
   row: {
     flexDirection: 'row',
@@ -184,13 +188,13 @@ const styles = StyleSheet.create({
   statusTitle: {
     fontSize: 14,
     color: '#777',
-    marginBottom: 4,
+    marginBottom: 0,
     marginLeft: 50,
   },
   status: {
     fontSize: 16,
     color: theme.colors.textSecondary,
-    marginBottom: 8,
+    marginBottom: 10,
     fontWeight: 'bold',
     marginLeft: 50,
   },

@@ -174,8 +174,7 @@ const styles = StyleSheet.create({
   image: {
     width: 90,
     height: 90,
-    borderColor: 'black',
-    borderWidth: 1,
+    borderRadius: 6,
   },
   infoContainer: {
     flex: 1,
@@ -213,13 +212,13 @@ const styles = StyleSheet.create({
   statusTitle: {
     fontSize: 14,
     color: '#777',
-    marginBottom: 4,
+    marginBottom: 0,
     marginLeft: 50,
   },
   status: {
     fontSize: 16,
     color: theme.colors.textSecondary,
-    marginBottom: 8,
+    marginBottom: 10,
     fontWeight: 'bold',
     marginLeft: 50,
   },
