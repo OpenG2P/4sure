@@ -4,13 +4,14 @@ import {ButtonSecondary, ButtonPrimary} from '@/components';
 import theme from '@/utils/theme';
 
 interface VerificationFailureScreenProps {
+  textData: string;
   onRetry: () => void;
   onSubmitWithoutVerification: () => void;
 }
 
 export const VerificationFailureScreen: React.FC<
   VerificationFailureScreenProps
-> = ({onRetry, onSubmitWithoutVerification}) => {
+> = ({onRetry, onSubmitWithoutVerification, textData}) => {
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -18,10 +19,7 @@ export const VerificationFailureScreen: React.FC<
         style={styles.imageStyle}
       />
       <Text style={[theme.headingText, styles.textStyle]}>Error</Text>
-      <Text style={theme.subHeadingText}>
-        Sorry! We couldn’t verify your photo. Please try again or, you can
-        submit without verification.
-      </Text>
+      <Text style={theme.subHeadingText}>{textData}</Text>
       <View style={styles.buttonContainer}>
         <ButtonSecondary
           title="RETRY"
@@ -29,7 +27,7 @@ export const VerificationFailureScreen: React.FC<
           style={styles.buttonStyle}
         />
         <ButtonPrimary
-          title="SUBMIT WITHOUT VERIFICATION"
+          title="CLOSE"
           onPress={onSubmitWithoutVerification}
           style={styles.buttonStyle}
         />

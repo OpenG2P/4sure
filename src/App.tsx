@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
-  Text,
   PermissionsAndroid,
   Platform,
   View,
@@ -18,7 +17,9 @@ const ovpble = new OvpBle({deviceName: 'example'});
 
 export default function App() {
   const [result, setResult] = useState<any>('');
+  const [beneficiaryVC, setBeneficiaryVC] = useState<any>('');
   const [error, setError] = useState<any>(null);
+  const [beneficiaryError, setBeneficiaryError] = useState<any>(null);
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const {state} = useUI(ovpble);
   const [isFaceVerified, setIsFaceVerified] = React.useState('unverified');
@@ -27,7 +28,6 @@ export default function App() {
     SplashScreen.hide();
     requestBluetoothPermissions();
     configureBiometricSDK();
-    startTransfer();
   }, []);
 
   async function requestBluetoothPermissions() {
@@ -60,23 +60,12 @@ export default function App() {
         matcher: {
           threshold: 1.0,
         },
-        liveness: {
-          tfModel: {
-            path: 'https://github.com/biometric-technologies/liveness-detection-model/releases/download/v0.2.0/deePix.tflite',
-            inputWidth: 224,
-            inputHeight: 224,
-            // 0.0 - real, 1.0 - spoof
-            threshold: 0.5,
-            modelChecksum:
-              '797b4d99794965749635352d55da38d4748c28c659ee1502338badee4614ed06',
-          },
-        },
       },
     };
     await configure(config).then(() => console.log('Biometric SDK Ready'));
   }
 
-  const startTransfer = () => {
+  const startNationalIDTransfer = () => {
     setResult('');
     setError(null);
 
@@ -84,10 +73,22 @@ export default function App() {
       .startTransfer()
       .then(vc => {
         setResult(JSON.parse(vc));
-        // console.log("VC_DEBUG", JSON.parse(vc))
       })
       .catch(err => {
         setError(err);
+      });
+  };
+
+  const startBeneficiaryIDTransfer = () => {
+    setBeneficiaryVC('');
+    setBeneficiaryError(null);
+    ovpble
+      .startTransfer()
+      .then(vc => {
+        setBeneficiaryVC(JSON.parse(vc));
+      })
+      .catch(err => {
+        setBeneficiaryError(err);
       });
   };
 
@@ -97,11 +98,14 @@ export default function App() {
       setIsFaceVerified('failed');
       return;
     }
-
-    const comparisonResult = await faceCompare(capturedPhoto, capturedPhoto);
-
+    var resultPhotoB64 = result.credential.biometrics.face;
+    const base64Pattern = /^data:image\/[a-z]+;base64,/;
+    if (resultPhotoB64.match(base64Pattern)) {
+      resultPhotoB64 = resultPhotoB64.replace(base64Pattern, '');
+    }
+    const comparisonResult = await faceCompare(resultPhotoB64, capturedPhoto);
+    console.log('ComparisonResult:', comparisonResult);
     if (comparisonResult) {
-      console.log(comparisonResult);
       console.log('Face comparison successful: The faces match.');
       setIsFaceVerified('successful');
     } else {
@@ -142,13 +146,16 @@ export default function App() {
       <MainScreen
         state={state}
         setVCData={setResult}
+        setBeneficiaryVCData={setBeneficiaryVC}
         ovpble={ovpble}
         setIsFaceVerified={setIsFaceVerified}
         returnVC={returnVC}
         isFaceVerified={isFaceVerified}
         verifyFace={verifyFace}
-        transferFun={startTransfer}
+        startNationalIDTransfer={startNationalIDTransfer}
+        startBeneficiaryIDTransfer={startBeneficiaryIDTransfer}
         vcData={result}
+        beneficiaryVCData={beneficiaryVC}
         capturedPhoto={capturedPhoto}
         setCapturedPhoto={setCapturedPhoto}
       />
@@ -160,13 +167,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
     backgroundColor: 'white',
-    color: 'black',
-  },
-  state: {
-    fontSize: 20,
-    marginBottom: 10,
-    color: 'black',
+    // color: 'black',
   },
 });
