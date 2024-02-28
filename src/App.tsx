@@ -123,14 +123,17 @@ export default function App() {
     }
 
     const fullNameEng =
-      result.verifiableCredential.credentialSubject.fullName.find(
+      result.verifiableCredential?.credential?.credentialSubject?.fullName.find(
         (fn: {language: string}) => fn.language === 'eng',
       ).value;
-    const genderEng = result.verifiableCredential.credentialSubject.gender.find(
-      (g: {language: string}) => g.language === 'eng',
-    ).value;
-    const dob = result.verifiableCredential.credentialSubject.dateOfBirth;
-    const uin = result.verifiableCredential.credentialSubject.UIN;
+    const genderEng =
+      result.verifiableCredential?.credential?.credentialSubject?.gender.find(
+        (g: {language: string}) => g.language === 'eng',
+      ).value;
+    const dob =
+      result.verifiableCredential?.credential?.credentialSubject?.dateOfBirth;
+    const uin =
+      result.vverifiableCredential?.credential?.credentialSubject?.UIN;
 
     const jsonData = JSON.stringify({
       full_name: fullNameEng,

@@ -36,7 +36,7 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
   const validateCards = () => {
     console.log('Validating both the cards UIN');
     if (
-      vcData?.id ===
+      vcData?.verifiableCredential?.credential?.credentialSubject?.UIN ===
       beneficiaryVCData?.verifiableCredential?.credential?.credentialSubject
         ?.UIN
     ) {
