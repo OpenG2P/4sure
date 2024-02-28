@@ -8,3 +8,6 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
+# Ignore SLF4J
+-dontwarn org.slf4j.**
+-keep class org.slf4j.** { *; }
