@@ -5,8 +5,9 @@ import {
   Platform,
   View,
   NativeModules,
+  Linking,
 } from 'react-native';
-import {request, PERMISSIONS, openSettings} from 'react-native-permissions';
+import {request, PERMISSIONS} from 'react-native-permissions';
 import {configure, faceCompare} from '@iriscan/biometric-sdk-react-native';
 import OvpBle, {useUI} from '@mosip/ble-verifier-sdk';
 import SplashScreen from 'react-native-splash-screen';
@@ -28,6 +29,18 @@ export default function App() {
     SplashScreen.hide();
     requestBluetoothPermissions();
     configureBiometricSDK();
+  }, []);
+
+  const [openedByIntent, setOpenedByIntent] = useState(false);
+
+  useEffect(() => {
+    const checkInitialURL = async () => {
+      const initialURL = await Linking.getInitialURL();
+      // If there's an initial URL, it means the app was opened through an Intent/deep link
+      setOpenedByIntent(!!initialURL);
+    };
+
+    checkInitialURL();
   }, []);
 
   async function requestBluetoothPermissions() {
@@ -163,6 +176,7 @@ export default function App() {
         beneficiaryVCData={beneficiaryVC}
         capturedPhoto={capturedPhoto}
         setCapturedPhoto={setCapturedPhoto}
+        openedByIntent={openedByIntent}
       />
     </View>
   );

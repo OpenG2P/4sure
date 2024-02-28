@@ -5,13 +5,14 @@ import theme from '@/utils/theme';
 
 interface VerificationFailureScreenProps {
   textData: string;
+  openedByIntent: boolean;
   onRetry: () => void;
   onSubmitWithoutVerification: () => void;
 }
 
 export const VerificationFailureScreen: React.FC<
   VerificationFailureScreenProps
-> = ({onRetry, onSubmitWithoutVerification, textData}) => {
+> = ({onRetry, openedByIntent, onSubmitWithoutVerification, textData}) => {
   return (
     <SafeAreaView style={styles.container}>
       <Image

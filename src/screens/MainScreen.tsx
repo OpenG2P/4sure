@@ -26,6 +26,7 @@ interface MainScreenProps {
   verifyFace: any;
   setCapturedPhoto: any;
   beneficiaryVCData: any;
+  openedByIntent: any;
 }
 
 const MainScreen: React.FC<MainScreenProps> = props => {
@@ -49,14 +50,16 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     }
   }, [beneficiaryVCData, beneficiaryVCPhotoPath]);
 
-  const restartProcess = () => {
+  const restartProcess = (startAdvertising = true) => {
     props.setVCData(null);
     props.ovpble.stopTransfer();
     setPhotoPath('');
     setIsReadyToCapture(false);
     setVcPhotoPath('');
     props.setIsFaceVerified('unverified');
-    props.startNationalIDTransfer();
+    if (startAdvertising) {
+      props.startNationalIDTransfer();
+    }
     setIsCardValid('unverified');
   };
 
@@ -207,6 +210,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     } else if (vcData && isFaceVerified === 'failed') {
       return (
         <VerificationFailureScreen
+          openedByIntent={props.openedByIntent}
           textData="Sorry! We couldn’t verify your photo. Please try again."
           onRetry={() => {
             setPhotoPath('');
@@ -216,10 +220,16 @@ const MainScreen: React.FC<MainScreenProps> = props => {
         />
       );
     } else if (isCardValid === 'valid') {
-      return <VerificationSuccessScreen onSubmit={props.returnVC} />;
+      return (
+        <VerificationSuccessScreen
+          onSubmit={props.returnVC}
+          openedByIntent={props.openedByIntent}
+        />
+      );
     } else if (isCardValid === 'invalid') {
       return (
         <VerificationFailureScreen
+          openedByIntent={props.openedByIntent}
           textData="Sorry! The UINs do not match"
           onRetry={() => {
             setIsCardValid('unverified');

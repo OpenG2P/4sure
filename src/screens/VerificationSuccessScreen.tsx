@@ -4,12 +4,13 @@ import {ButtonPrimary} from '@/components';
 import theme from '@/utils/theme';
 
 interface VerificationSuccessScreenProps {
+  openedByIntent: boolean;
   onSubmit: () => void;
 }
 
 export const VerificationSuccessScreen: React.FC<
   VerificationSuccessScreenProps
-> = ({onSubmit}) => {
+> = ({openedByIntent, onSubmit}) => {
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -18,13 +19,21 @@ export const VerificationSuccessScreen: React.FC<
       />
       <Text style={[theme.headingText, styles.textStyle]}>Thank You</Text>
       <Text style={theme.subHeadingText}>
-        That's all we need to start verifying your identity.
+        That's all we need for verifying your identity.
       </Text>
-      <ButtonPrimary
-        title="SUBMIT"
-        onPress={onSubmit}
-        style={styles.buttonStyle}
-      />
+      {openedByIntent ? (
+        <ButtonPrimary
+          title="SUBMIT"
+          onPress={onSubmit}
+          style={styles.buttonStyle}
+        />
+      ) : (
+        <ButtonPrimary
+          title="CLOSE"
+          onPress={onSubmit}
+          style={styles.buttonStyle}
+        />
+      )}
     </SafeAreaView>
   );
 };
