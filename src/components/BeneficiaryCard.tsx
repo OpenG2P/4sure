@@ -29,7 +29,7 @@ export function BeneficiaryCard(props: {
               <Text style={styles.topTitle}>Full Name</Text>
               <Text style={styles.name}>{props.fullName}</Text>
               <Text style={styles.topTitle}>ID Type</Text>
-              <Text style={styles.detail}>
+              <Text style={styles.topDetail}>
                 {props.idType === 'UIN' ? 'National Card' : props.idType}{' '}
               </Text>
             </View>
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2.22,
     elevation: 3,
     alignItems: 'center',
-    width: 300,
+    width: 315,
     height: 200,
     marginBottom: 15,
     marginTop: 15,
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2.22,
     elevation: 3,
     alignItems: 'center',
-    width: 300,
+    width: 315,
     marginBottom: 0,
     marginTop: 15,
   },
@@ -154,6 +154,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#777',
     marginRight: 0,
+    left: '-30%',
   },
   title: {
     fontSize: 14,
@@ -164,6 +165,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: theme.colors.textTertiary,
     marginBottom: 8,
+    left: '-30%',
+  },
+  topDetail: {
+    fontSize: 16,
+    color: theme.colors.textSecondary,
+    marginBottom: 8,
+    fontWeight: '500',
+    left: '-30%',
   },
   detail: {
     fontSize: 16,

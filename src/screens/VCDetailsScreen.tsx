@@ -17,7 +17,7 @@ interface VCDetailsScreenProps {
   onNationalIDClick: () => void;
   onBeneficiaryIDClick: () => void;
   onCapturePhoto: () => void;
-  onBack: () => void;
+  onBack: (startAdvertising: boolean) => void;
   setIsCardValid: (state: string) => void;
 }
 
@@ -51,7 +51,7 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
         <BackButton
           style={styles.backButtonStyle}
           source={require('../../assets/images/back.png')}
-          onPress={onBack}
+          onPress={() => onBack(false)}
         />
       )}
       <View style={styles.detailsContainer}>
