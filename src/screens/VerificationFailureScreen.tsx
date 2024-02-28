@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, Text, SafeAreaView, StyleSheet, Image} from 'react-native';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StyleSheet,
+  Image,
+  BackHandler,
+} from 'react-native';
 import {ButtonSecondary, ButtonPrimary} from '@/components';
 import theme from '@/utils/theme';
 
@@ -16,7 +23,7 @@ export const VerificationFailureScreen: React.FC<
   return (
     <SafeAreaView style={styles.container}>
       <Image
-        source={require('../../assets/images/failure.png')} // Adjust the image path as necessary
+        source={require('../../assets/images/failure.png')}
         style={styles.imageStyle}
       />
       <Text style={[theme.headingText, styles.textStyle]}>Error</Text>
@@ -29,7 +36,7 @@ export const VerificationFailureScreen: React.FC<
         />
         <ButtonPrimary
           title="CLOSE"
-          onPress={onSubmitWithoutVerification}
+          onPress={BackHandler.exitApp}
           style={styles.buttonStyle}
         />
       </View>

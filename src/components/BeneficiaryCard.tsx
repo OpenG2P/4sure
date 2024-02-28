@@ -11,6 +11,7 @@ export function BeneficiaryCard(props: {
   uin: string;
   generatedOn: string;
   isVerified: string;
+  programName: string;
   onPress: () => void;
 }) {
   var maskedUIN = '';
@@ -52,7 +53,7 @@ export function BeneficiaryCard(props: {
           </View>
           <View style={styles.bottomLine} />
           <Text style={styles.title}>Program Name</Text>
-          <Text style={styles.programDetail}>National Beneficiary Program</Text>
+          <Text style={styles.programDetail}>{props.programName}</Text>
         </View>
       </View>
     );

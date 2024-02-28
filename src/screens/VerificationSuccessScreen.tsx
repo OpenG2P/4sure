@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, SafeAreaView, StyleSheet, Image} from 'react-native';
+import {Text, SafeAreaView, StyleSheet, Image, BackHandler} from 'react-native';
 import {ButtonPrimary} from '@/components';
 import theme from '@/utils/theme';
 
@@ -30,7 +30,7 @@ export const VerificationSuccessScreen: React.FC<
       ) : (
         <ButtonPrimary
           title="CLOSE"
-          onPress={onSubmit}
+          onPress={() => BackHandler.exitApp()}
           style={styles.buttonStyle}
         />
       )}

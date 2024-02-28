@@ -5,7 +5,6 @@ import {
   Platform,
   View,
   NativeModules,
-  Linking,
 } from 'react-native';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import {configure, faceCompare} from '@iriscan/biometric-sdk-react-native';
@@ -32,16 +31,6 @@ export default function App() {
   }, []);
 
   const [openedByIntent, setOpenedByIntent] = useState(false);
-
-  useEffect(() => {
-    const checkInitialURL = async () => {
-      const initialURL = await Linking.getInitialURL();
-      // If there's an initial URL, it means the app was opened through an Intent/deep link
-      setOpenedByIntent(!!initialURL);
-    };
-
-    checkInitialURL();
-  }, []);
 
   async function requestBluetoothPermissions() {
     if (Platform.OS === 'android' && Platform.Version >= 31) {
@@ -145,14 +134,20 @@ export default function App() {
       ).value;
     const dob =
       result.verifiableCredential?.credential?.credentialSubject?.dateOfBirth;
-    const uin =
-      result.vverifiableCredential?.credential?.credentialSubject?.UIN;
+    const uin = result.verifiableCredential?.credential?.credentialSubject?.UIN;
+    const programName =
+      result.verifiableCredential?.credential?.credentialSubject?.programName.find(
+        (fn: {language: string}) => fn.language === 'eng',
+      ).value;
 
     const jsonData = JSON.stringify({
       full_name: fullNameEng,
       gender: genderEng,
       dob: dob,
       uin: uin,
+      program_name: programName,
+      is_photo_verified: isFaceVerified === 'successful',
+      vc_data: result,
     });
 
     console.log('Returning data for UIN:', uin);

@@ -36,7 +36,8 @@ const MainScreen: React.FC<MainScreenProps> = props => {
   const [beneficiaryVCPhotoPath, setBeneficiaryVCPhotoPath] = useState('');
   const [isCardValid, setIsCardValid] = useState('unverified');
 
-  const {state, vcData, beneficiaryVCData, isFaceVerified} = props;
+  const {state, vcData, beneficiaryVCData, setIsFaceVerified, isFaceVerified} =
+    props;
 
   useEffect(() => {
     if (vcData && !vcPhotoPath) {
@@ -164,7 +165,8 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           setPhoto={(base64: string, path: string) => {
             props.setCapturedPhoto(base64);
             setPhotoPath(path);
-            console.log('Photo captured:', path);
+            setIsFaceVerified('unverified');
+            console.log('Photo Verified Status:', isFaceVerified);
           }}
           restartProcess={restartProcess}
           setIsReadyToCapture={setIsReadyToCapture}
@@ -177,11 +179,15 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           photoPath={photoPath}
           onRetake={() => {
             setPhotoPath('');
+            props.setCapturedPhoto(null);
+            props.setIsFaceVerified('unverified');
             setIsReadyToCapture(true);
           }}
           onVerify={props.verifyFace}
           onBack={() => {
             setPhotoPath('');
+            props.setCapturedPhoto(null);
+            props.setIsFaceVerified('unverified');
             setIsReadyToCapture(true);
           }}
         />

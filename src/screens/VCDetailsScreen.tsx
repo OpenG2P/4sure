@@ -79,6 +79,10 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
             beneficiaryVCData?.verifiableCredential?.credential
               ?.credentialSubject?.fullName?.[0]?.value
           }
+          programName={
+            beneficiaryVCData?.verifiableCredential?.credential
+              ?.credentialSubject?.programName?.[0]?.value
+          }
           isVerified={beneficiaryVCData?.isVerified}
           uin={
             beneficiaryVCData?.verifiableCredential?.credential
