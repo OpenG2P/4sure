@@ -73,6 +73,7 @@ export default function App() {
       .startTransfer()
       .then(vc => {
         setResult(JSON.parse(vc));
+        console.log('VC Data:', vc);
       })
       .catch(err => {
         setError(err);
@@ -98,7 +99,8 @@ export default function App() {
       setIsFaceVerified('failed');
       return;
     }
-    var resultPhotoB64 = result.credential.biometrics.face;
+    var resultPhotoB64 =
+      result.verifiableCredential?.credential?.credentialSubject?.face;
     const base64Pattern = /^data:image\/[a-z]+;base64,/;
     if (resultPhotoB64.match(base64Pattern)) {
       resultPhotoB64 = resultPhotoB64.replace(base64Pattern, '');

@@ -61,8 +61,8 @@ const MainScreen: React.FC<MainScreenProps> = props => {
   };
 
   const setVCPhoto = () => {
-    console.log('VC Data Captured');
-    let vcPhotoBase64 = props?.vcData?.credential?.biometrics.face;
+    let vcPhotoBase64 =
+      props?.vcData?.verifiableCredential?.credential?.credentialSubject?.face;
 
     // Remove data URL scheme if present
     const base64Pattern = /^data:image\/[a-z]+;base64,/;

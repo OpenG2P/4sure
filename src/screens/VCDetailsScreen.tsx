@@ -59,11 +59,14 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
         </Text> */}
         <NationalCard
           source={{uri: 'file://' + vcPhotoPath}}
-          fullName={vcData?.credential?.fullName}
+          fullName={
+            vcData?.verifiableCredential?.credential?.credentialSubject
+              ?.fullName
+          }
           isVerified={vcData?.isVerified}
           isPhotoIDVerified={isIdVerified}
-          uin={vcData?.id}
-          idType={vcData?.idType}
+          uin={vcData?.verifiableCredential?.credential?.credentialSubject?.UIN}
+          idType={'National Card'}
           generatedOn={vcData?.generatedOn}
           onCapturePhoto={onCapturePhoto}
           onPress={onNationalIDClick}
