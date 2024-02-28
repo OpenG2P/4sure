@@ -149,8 +149,8 @@ const styles = StyleSheet.create({
   preview: {
     position: 'absolute',
     top: 0,
-    left: 0,
-    right: 0,
+    left: -2,
+    right: -2,
     bottom: 0,
   },
 });

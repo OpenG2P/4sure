@@ -47,11 +47,13 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
   };
   return (
     <SafeAreaView style={styles.container}>
-      <BackButton
-        style={styles.backButtonStyle}
-        source={require('../../assets/images/back.png')}
-        onPress={onBack}
-      />
+      {(vcPhotoPath || beneficiaryVCPhotoPath) && (
+        <BackButton
+          style={styles.backButtonStyle}
+          source={require('../../assets/images/back.png')}
+          onPress={onBack}
+        />
+      )}
       <View style={styles.detailsContainer}>
         <Text style={theme.headingText}>Add Your ID Cards</Text>
         {/* <Text style={theme.subHeadingText}>

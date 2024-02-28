@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, SafeAreaView, StyleSheet, Image} from 'react-native';
+import {Text, SafeAreaView, StyleSheet, Image} from 'react-native';
 import {ButtonPrimary} from '@/components';
 import theme from '@/utils/theme';
 
