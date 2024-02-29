@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import com.facebook.react.bridge.*
 import org.json.JSONObject
+import android.util.Log
 
 class ODKDataModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
@@ -32,6 +33,15 @@ class ODKDataModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
                 e.printStackTrace()
             }
         }
+    }
+
+    @ReactMethod
+    fun hasFullNameExtra(promise: Promise) {
+        val extras = currentActivity?.intent?.extras
+        val hasFullName = extras?.containsKey("full_name") ?: false
+        // Log for debugging purposes
+        Log.d("IntentExtras", "Has full_name: $hasFullName")
+        promise.resolve(hasFullName)
     }
 
     @ReactMethod

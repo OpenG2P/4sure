@@ -30,25 +30,13 @@ export default function App() {
     SplashScreen.hide();
     requestBluetoothPermissions();
     configureBiometricSDK();
-  }, []);
-
-  useEffect(() => {
-    const fetchIntentExtra = async () => {
-      try {
-        const myTextExtra = await NativeModules.ODKDataModule.getIntentExtra(
-          'uin',
-        );
-        console.log('Intent extra:', myTextExtra);
-        if (myTextExtra) {
-          setOpenedByIntent(true);
-        }
-      } catch (e) {
-        // log error
-        console.error('Error fetching intent extra:', e);
-      }
-    };
-
-    fetchIntentExtra();
+    NativeModules.ODKDataModule.hasFullNameExtra()
+      .then((intentExists: any) => {
+        setOpenedByIntent(intentExists);
+      })
+      .catch((error: any) => {
+        console.error('Error checking intent FName:', error);
+      });
   }, []);
 
   async function requestBluetoothPermissions() {
@@ -166,7 +154,7 @@ export default function App() {
       uin: uin,
       program_name: programName,
       is_photo_verified: isFaceVerified === 'successful',
-      vc_data: 'vc_sample',
+      vc_data: 'vc_data_sample',
     });
 
     console.log('Returning data for UIN:', uin);
