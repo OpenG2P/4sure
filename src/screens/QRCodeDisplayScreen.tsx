@@ -1,9 +1,7 @@
-// QRCodeDisplayScreen.tsx
 import React from 'react';
 import {Text, View, SafeAreaView, StyleSheet} from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import theme from '@/utils/theme';
-// import {CornerBorders} from '@/components';
 
 interface QRCodeDisplayScreenProps {
   uri: string;

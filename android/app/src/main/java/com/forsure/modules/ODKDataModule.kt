@@ -33,4 +33,18 @@ class ODKDataModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
             }
         }
     }
+
+    @ReactMethod
+    fun getIntentExtra(name: String, promise: Promise) {
+        val activity = currentActivity ?: return promise.reject("ERROR", "Current activity is null")
+
+        val intent = activity.intent
+        val value = intent.getStringExtra(name)
+
+        if (value != null) {
+            promise.resolve(value)
+        } else {
+            promise.reject("ERROR", "No such extra: $name")
+        }
+    }
 }

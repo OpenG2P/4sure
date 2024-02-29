@@ -5,6 +5,7 @@ import {
   Platform,
   View,
   NativeModules,
+  // Linking,
 } from 'react-native';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import {configure, faceCompare} from '@iriscan/biometric-sdk-react-native';
@@ -23,6 +24,7 @@ export default function App() {
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const {state} = useUI(ovpble);
   const [isFaceVerified, setIsFaceVerified] = React.useState('unverified');
+  const [openedByIntent, setOpenedByIntent] = useState(false);
 
   useEffect(() => {
     SplashScreen.hide();
@@ -30,7 +32,24 @@ export default function App() {
     configureBiometricSDK();
   }, []);
 
-  const [openedByIntent, setOpenedByIntent] = useState(false);
+  useEffect(() => {
+    const fetchIntentExtra = async () => {
+      try {
+        const myTextExtra = await NativeModules.ODKDataModule.getIntentExtra(
+          'uin',
+        );
+        console.log('Intent extra:', myTextExtra);
+        if (myTextExtra) {
+          setOpenedByIntent(true);
+        }
+      } catch (e) {
+        // log error
+        console.error('Error fetching intent extra:', e);
+      }
+    };
+
+    fetchIntentExtra();
+  }, []);
 
   async function requestBluetoothPermissions() {
     if (Platform.OS === 'android' && Platform.Version >= 31) {
@@ -147,7 +166,7 @@ export default function App() {
       uin: uin,
       program_name: programName,
       is_photo_verified: isFaceVerified === 'successful',
-      vc_data: result,
+      vc_data: 'vc_sample',
     });
 
     console.log('Returning data for UIN:', uin);
