@@ -35,7 +35,7 @@ export function BeneficiaryCard(props: {
               </Text>
             </View>
           </View>
-          <Text style={styles.title}>UIN</Text>
+          <Text style={styles.title}>Beneficiary ID</Text>
           <Text style={[styles.detail, {color: theme.colors.textTertiary}]}>
             ******{maskedUIN}
           </Text>
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#777',
     marginRight: 0,
-    left: '-50%',
+    left: '5%',
   },
   title: {
     fontSize: 14,
@@ -166,14 +166,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: theme.colors.textTertiary,
     marginBottom: 8,
-    left: '-50%',
+    left: '5%',
   },
   topDetail: {
     fontSize: 16,
     color: theme.colors.textSecondary,
     marginBottom: 8,
     fontWeight: '500',
-    left: '-50%',
+    left: '5%',
   },
   detail: {
     fontSize: 16,
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     alignItems: 'center',
   },
   statusContainer: {
@@ -199,14 +199,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#777',
     marginBottom: 0,
-    marginLeft: 50,
+    marginLeft: '62%',
   },
   status: {
     fontSize: 16,
     color: theme.colors.textSecondary,
     marginBottom: 10,
     fontWeight: 'bold',
-    marginLeft: 50,
+    marginLeft: '62%',
   },
   bottomLine: {
     borderBottomWidth: 2,

@@ -138,8 +138,15 @@ const MainScreen: React.FC<MainScreenProps> = props => {
   };
 
   const setVCPhoto = () => {
-    let vcPhotoBase64 =
-      props?.vcData?.verifiableCredential?.credential?.credentialSubject?.face;
+    let vcPhotoBase64 = '';
+    if (props?.vcData?.verifiableCredential?.credential) {
+      vcPhotoBase64 =
+        props?.vcData?.verifiableCredential?.credential?.credentialSubject
+          ?.face;
+    } else {
+      vcPhotoBase64 = props?.vcData?.credential?.biometrics?.face;
+    }
+
     console.log('VC Photo:', vcPhotoBase64);
     // Remove data URL scheme if present
     const base64Pattern = /^data:image\/[a-z]+;base64,/;

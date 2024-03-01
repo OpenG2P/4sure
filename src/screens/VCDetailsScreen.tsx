@@ -31,12 +31,19 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
   onCapturePhoto,
   setIsCardValid,
 }) => {
+  let generatedOn = '';
+  if (vcData?.verifiableCredential?.credential?.credentialSubject) {
+    vcData = vcData.verifiableCredential.credential.credentialSubject;
+    generatedOn = vcData?.generatedOn;
+  } else {
+    generatedOn = vcData?.generatedOn;
+    vcData = vcData?.verifiableCredential?.credentialSubject;
+  }
   const validateCards = () => {
-    console.log('Validating both the cards UIN');
     if (
-      vcData?.verifiableCredential?.credential?.credentialSubject?.UIN ===
+      vcData?.UIN ===
       beneficiaryVCData?.verifiableCredential?.credential?.credentialSubject
-        ?.UIN
+        ?.nationalId
     ) {
       setIsCardValid('valid');
     } else {
@@ -53,15 +60,12 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
         </Text> */}
         <NationalCard
           source={{uri: 'file://' + vcPhotoPath}}
-          fullName={
-            vcData?.verifiableCredential?.credential?.credentialSubject
-              ?.fullName
-          }
+          fullName={vcData?.fullName}
           isVerified={vcData?.isVerified}
           isPhotoIDVerified={isIdVerified}
-          uin={vcData?.verifiableCredential?.credential?.credentialSubject?.UIN}
+          uin={vcData?.UIN}
           idType={'National Card'}
-          generatedOn={vcData?.generatedOn}
+          generatedOn={generatedOn}
           onCapturePhoto={onCapturePhoto}
           onPress={onNationalIDClick}
         />

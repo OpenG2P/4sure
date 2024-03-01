@@ -121,8 +121,14 @@ export default function App() {
       setIsFaceVerified('failed');
       return;
     }
-    var resultPhotoB64 =
-      result.verifiableCredential?.credential?.credentialSubject?.face;
+    let resultPhotoB64 = '';
+    if (result?.verifiableCredential?.credential) {
+      resultPhotoB64 =
+        result?.verifiableCredential?.credential?.credentialSubject?.face;
+    } else {
+      resultPhotoB64 = result?.credential?.biometrics?.face;
+    }
+
     const base64Pattern = /^data:image\/[a-z]+;base64,/;
     if (resultPhotoB64.match(base64Pattern)) {
       resultPhotoB64 = resultPhotoB64.replace(base64Pattern, '');
