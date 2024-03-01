@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  StyleSheet,
-  Image,
-  BackHandler,
-} from 'react-native';
+import {View, Text, SafeAreaView, StyleSheet, Image} from 'react-native';
 import {ButtonSecondary, ButtonPrimary} from '@/components';
 import theme from '@/utils/theme';
 
@@ -15,11 +8,18 @@ interface VerificationFailureScreenProps {
   openedByIntent: boolean;
   onRetry: () => void;
   onSubmitWithoutVerification: () => void;
+  onBack: () => void;
 }
 
 export const VerificationFailureScreen: React.FC<
   VerificationFailureScreenProps
-> = ({onRetry, openedByIntent, onSubmitWithoutVerification, textData}) => {
+> = ({
+  onRetry,
+  openedByIntent,
+  onSubmitWithoutVerification,
+  textData,
+  onBack,
+}) => {
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -35,8 +35,8 @@ export const VerificationFailureScreen: React.FC<
           style={styles.buttonStyle}
         />
         <ButtonPrimary
-          title="CLOSE"
-          onPress={BackHandler.exitApp}
+          title="HOME"
+          onPress={onBack}
           style={styles.buttonStyle}
         />
       </View>
@@ -51,19 +51,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   imageStyle: {
-    width: 100,
-    height: 100,
-    marginBottom: 20,
+    width: 80,
+    height: 80,
   },
   textStyle: {
     fontWeight: 'bold',
-    marginTop: 20,
+    marginTop: 10,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     width: '100%',
-    marginTop: 20,
+    // marginTop: 20,
   },
   buttonStyle: {
     flex: 1,

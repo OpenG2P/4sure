@@ -61,7 +61,7 @@ export function BeneficiaryCard(props: {
   return (
     <View style={styles.emptyCardContainer}>
       <View>
-        <Text style={styles.emptyTopTitle}>Beneficiary ID</Text>
+        <Text style={styles.emptyTopTitle}>Add Beneficiary ID</Text>
         <TouchableOpacity
           style={styles.placeHolderContainer}
           onPress={props.onPress}>
@@ -78,14 +78,14 @@ export function BeneficiaryCard(props: {
 
 const styles = StyleSheet.create({
   plusSign: {
-    fontSize: 55,
-    paddingBottom: 10,
+    fontSize: 45,
+    paddingBottom: 0,
     color: theme.colors.lineColor,
-    fontWeight: '200',
+    fontWeight: '300',
   },
   placeHolderContainer: {
-    left: '43%',
-    marginTop: 15,
+    left: '50%',
+    marginTop: 20,
     marginBottom: 15,
   },
   placeHolder: {
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   emptyTopTitle: {
     fontSize: 18,
     color: theme.colors.primary,
-    marginRight: 90,
+    marginRight: 60,
     fontWeight: 'bold',
   },
   emptyCardContainer: {
@@ -155,25 +155,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#777',
     marginRight: 0,
-    left: '-30%',
+    left: '-50%',
   },
   title: {
     fontSize: 14,
     color: '#777',
   },
   name: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '500',
     color: theme.colors.textTertiary,
     marginBottom: 8,
-    left: '-30%',
+    left: '-50%',
   },
   topDetail: {
     fontSize: 16,
     color: theme.colors.textSecondary,
     marginBottom: 8,
     fontWeight: '500',
-    left: '-30%',
+    left: '-50%',
   },
   detail: {
     fontSize: 16,
@@ -182,10 +182,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   programDetail: {
-    fontSize: 16,
+    fontSize: 15,
     color: theme.colors.textSecondary,
     marginBottom: 0,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   row: {
     flexDirection: 'row',

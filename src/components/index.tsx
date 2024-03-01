@@ -1,5 +1,6 @@
 export * from './ButtonPrimary';
 export * from './ButtonSecondary';
+export * from './ButtonTertiary';
 export * from './CardButton';
 export * from './ScreenImage';
 export * from './NationalCard';

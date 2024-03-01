@@ -5,13 +5,14 @@ import {
   Platform,
   View,
   NativeModules,
+  Image,
   // Linking,
 } from 'react-native';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import {configure, faceCompare} from '@iriscan/biometric-sdk-react-native';
 import OvpBle, {useUI} from '@mosip/ble-verifier-sdk';
 import SplashScreen from 'react-native-splash-screen';
-
+import {BackButton} from '@/components';
 import MainScreen from './screens/MainScreen';
 
 const ovpble = new OvpBle({deviceName: 'example'});
@@ -26,6 +27,11 @@ export default function App() {
   const [isFaceVerified, setIsFaceVerified] = React.useState('unverified');
   const [openedByIntent, setOpenedByIntent] = useState(false);
 
+  const [isBackEnabled, setIsBackEnabled] = useState(false);
+  const [onBack, setOnBack] = useState<(enabled: boolean) => void>(
+    () => () => {},
+  );
+
   useEffect(() => {
     SplashScreen.hide();
     requestBluetoothPermissions();
@@ -35,21 +41,28 @@ export default function App() {
         setOpenedByIntent(intentExists);
       })
       .catch((error: any) => {
-        console.error('Error checking intent FName:', error);
+        console.error('Error checking for intent:', error);
       });
+    setIsBackEnabled(false);
   }, []);
 
   async function requestBluetoothPermissions() {
-    if (Platform.OS === 'android' && Platform.Version >= 31) {
-      await request(PERMISSIONS.ANDROID.BLUETOOTH_ADVERTISE);
-      await request(PERMISSIONS.ANDROID.BLUETOOTH_CONNECT);
-    } else if (Platform.OS === 'android') {
-      await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.BLUETOOTH,
-      );
-      await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN,
-      );
+    if (Platform.OS === 'android') {
+      if (Platform.Version >= 31) {
+        // For Android 12 and above
+        await request(PERMISSIONS.ANDROID.BLUETOOTH_ADVERTISE);
+        await request(PERMISSIONS.ANDROID.BLUETOOTH_CONNECT);
+      } else {
+        // For Android 10 and below
+        try {
+          await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.BLUETOOTH,
+            PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN,
+          ]);
+        } catch (err) {
+          console.error('Error requesting Bluetooth permissions:', err);
+        }
+      }
     }
   }
 
@@ -120,7 +133,7 @@ export default function App() {
       console.log('Face comparison successful: The faces match.');
       setIsFaceVerified('successful');
     } else {
-      console.error('Face comparison failed: The faces do not match.');
+      console.log('Face comparison failed: The faces do not match.');
       setIsFaceVerified('failed');
     }
   };
@@ -163,6 +176,29 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      {isBackEnabled && (
+        <BackButton
+          style={{
+            marginTop: '30%',
+            right: '65%',
+            height: 45,
+            width: 140,
+            // position: 'absolute',
+          }}
+          source={require('../assets/images/back.png')}
+          onPress={() => onBack(true)}
+        />
+      )}
+      <Image
+        style={{
+          left: '65%',
+          marginTop: '4%',
+          height: 45,
+          width: 140,
+          position: 'absolute',
+        }}
+        source={require('../assets/images/logo_dark.png')}
+      />
       <MainScreen
         state={state}
         setVCData={setResult}
@@ -179,6 +215,8 @@ export default function App() {
         capturedPhoto={capturedPhoto}
         setCapturedPhoto={setCapturedPhoto}
         openedByIntent={openedByIntent}
+        setIsBackEnabled={setIsBackEnabled}
+        setOnBack={setOnBack}
       />
     </View>
   );

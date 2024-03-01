@@ -1,5 +1,5 @@
-import React from 'react';
-import {View, Text, SafeAreaView, StyleSheet} from 'react-native';
+import React, {useEffect} from 'react';
+import {View, Image, Text, SafeAreaView, StyleSheet} from 'react-native';
 import {
   NationalCard,
   BeneficiaryCard,
@@ -17,7 +17,6 @@ interface VCDetailsScreenProps {
   onNationalIDClick: () => void;
   onBeneficiaryIDClick: () => void;
   onCapturePhoto: () => void;
-  onBack: (startAdvertising: boolean) => void;
   setIsCardValid: (state: string) => void;
 }
 
@@ -31,7 +30,6 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
   onBeneficiaryIDClick,
   onCapturePhoto,
   setIsCardValid,
-  onBack,
 }) => {
   const validateCards = () => {
     console.log('Validating both the cards UIN');
@@ -45,17 +43,11 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
       setIsCardValid('invalid');
     }
   };
+
   return (
     <SafeAreaView style={styles.container}>
-      {(vcPhotoPath || beneficiaryVCPhotoPath) && (
-        <BackButton
-          style={styles.backButtonStyle}
-          source={require('../../assets/images/back.png')}
-          onPress={() => onBack(false)}
-        />
-      )}
       <View style={styles.detailsContainer}>
-        <Text style={theme.headingText}>Add Your ID Cards</Text>
+        <Text style={[theme.headingText, {fontSize: 28}]}>e-Cards</Text>
         {/* <Text style={theme.subHeadingText}>
           Add VCs here to verify the details
         </Text> */}
@@ -94,7 +86,7 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
         />
         {isIdVerified && beneficiaryVCPhotoPath && (
           <ButtonPrimary
-            title="VALIDATE"
+            title="MATCH"
             onPress={validateCards}
             style={styles.buttonStyle}
           />

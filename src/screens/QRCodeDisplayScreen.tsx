@@ -14,7 +14,7 @@ export const QRCodeDisplayScreen: React.FC<QRCodeDisplayScreenProps> = ({
     <SafeAreaView style={styles.mainContainer}>
       <View style={styles.textContainer}>
         <Text style={theme.headingText}>
-          Scan this QR code using Inji Wallet App
+          Scan this QR code using wallet app
         </Text>
       </View>
       <View style={styles.qrCodeContainer}>
