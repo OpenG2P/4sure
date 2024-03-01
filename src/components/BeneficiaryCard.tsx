@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#777',
     marginRight: 0,
-    left: '5%',
+    left: '0%',
   },
   title: {
     fontSize: 14,
@@ -166,14 +166,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: theme.colors.textTertiary,
     marginBottom: 8,
-    left: '5%',
+    left: '0%',
   },
   topDetail: {
     fontSize: 16,
     color: theme.colors.textSecondary,
     marginBottom: 8,
     fontWeight: '500',
-    left: '5%',
+    left: '0%',
   },
   detail: {
     fontSize: 16,
