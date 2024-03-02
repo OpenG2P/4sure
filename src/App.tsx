@@ -147,20 +147,26 @@ export default function App() {
       console.error('Face verification not successful or not yet performed.');
       return;
     }
-
-    const fullNameEng =
-      result.verifiableCredential?.credential?.credentialSubject?.fullName.find(
+    let resultData = null;
+    let fullNameEng = '';
+    let genderEng = '';
+    if (result?.verifiableCredential?.credential?.credentialSubject) {
+      resultData = result.verifiableCredential.credential.credentialSubject;
+      fullNameEng = resultData?.fullName.value;
+      genderEng = resultData?.gender.value;
+    } else {
+      resultData = result?.verifiableCredential?.credentialSubject;
+      fullNameEng = resultData?.fullName.find(
         (fn: {language: string}) => fn.language === 'eng',
       ).value;
-    const genderEng =
-      result.verifiableCredential?.credential?.credentialSubject?.gender.find(
+      genderEng = resultData?.gender.find(
         (g: {language: string}) => g.language === 'eng',
       ).value;
-    const dob =
-      result.verifiableCredential?.credential?.credentialSubject?.dateOfBirth;
-    const uin = result.verifiableCredential?.credential?.credentialSubject?.UIN;
+    }
+    const dob = resultData?.dateOfBirth;
+    const uin = resultData?.UIN;
     const programName =
-      result.verifiableCredential?.credential?.credentialSubject?.programName.find(
+      beneficiaryVC.verifiableCredential.credential.credentialSubject?.programName.find(
         (fn: {language: string}) => fn.language === 'eng',
       ).value;
 
