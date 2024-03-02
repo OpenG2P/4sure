@@ -105,7 +105,6 @@ const MainScreen: React.FC<MainScreenProps> = props => {
       setIsBackEnabled(false);
     }
     if (isCardValid === 'valid') {
-      console.log('Setting back enabled');
       setIsBackEnabled(false);
     } else if (isCardValid === 'invalid') {
       setIsBackEnabled(false);
@@ -127,8 +126,24 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     props.ovpble.stopTransfer();
     setPhotoPath('');
     setIsReadyToCapture(false);
+    // Delete the file if it exists
+    RNFS.unlink(vcPhotoPath)
+      .then(() => {
+        console.log('File deleted');
+      })
+      .catch(err => {
+        console.error('Error deleting file:', err.message);
+      });
     setVcPhotoPath('');
     props.setBeneficiaryVCData(null);
+    // Delete the file if it exists
+    RNFS.unlink(beneficiaryVCPhotoPath)
+      .then(() => {
+        console.log('File deleted');
+      })
+      .catch(err => {
+        console.error('Error deleting file:', err.message);
+      });
     setBeneficiaryVCPhotoPath('');
     props.setIsFaceVerified('unverified');
     if (startAdvertising) {
@@ -147,22 +162,20 @@ const MainScreen: React.FC<MainScreenProps> = props => {
       vcPhotoBase64 = props?.vcData?.credential?.biometrics?.face;
     }
 
-    console.log('VC Photo:', vcPhotoBase64);
     // Remove data URL scheme if present
     const base64Pattern = /^data:image\/[a-z]+;base64,/;
     if (vcPhotoBase64.match(base64Pattern)) {
       vcPhotoBase64 = vcPhotoBase64.replace(base64Pattern, '');
     }
 
-    const path = RNFS.TemporaryDirectoryPath + '/face.jpg';
+    const path = RNFS.TemporaryDirectoryPath + '/face_' + Date.now() + '.jpg';
 
     RNFS.writeFile(path, vcPhotoBase64, 'base64')
       .then(() => {
-        console.log('File written to:', path);
         setVcPhotoPath(path);
       })
       .catch(err => {
-        console.error('Error writing file:', err.message);
+        console.log('Error writing file:', err.message);
       });
   };
 
@@ -181,7 +194,8 @@ const MainScreen: React.FC<MainScreenProps> = props => {
       );
     }
 
-    const path = RNFS.TemporaryDirectoryPath + '/beneficiary_face.jpg';
+    const path =
+      RNFS.TemporaryDirectoryPath + '/beneficiary_face_' + Date.now() + '.jpg';
 
     RNFS.writeFile(path, beneficiaryVCPhotoBase64, 'base64')
       .then(() => {
@@ -189,7 +203,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
         setBeneficiaryVCPhotoPath(path);
       })
       .catch(err => {
-        console.error('Error writing file:', err.message);
+        console.log('Error writing file:', err.message);
       });
   };
 
@@ -329,24 +343,26 @@ const MainScreen: React.FC<MainScreenProps> = props => {
         />
       );
     }
-
-    return (
-      <Text style={{color: 'black'}}>
-        Debugging Information:
-        {'\n'}
-        vcData: {JSON.stringify(vcData)}
-        {'\n'}
-        isReadyToCapture: {isReadyToCapture.toString()}
-        {'\n'}
-        photoPath: {photoPath}
-        {'\n'}
-        isFaceVerified: {isFaceVerified}
-        {'\n'}
-        state: {JSON.stringify(state)}
-        {'\n'}
-        isCardValid: {isCardValid}
-      </Text>
-    );
+    // Enable this for debugging
+    // return (
+    //   <SafeAreaView style={{backgroundColor: 'white'}}>
+    //     <Text style={{color: 'black', backgroundColor: 'white'}}>
+    //       Debugging Information:
+    //       {'\n'}
+    //       nationalIDData: {JSON.stringify(vcData)}
+    //       {'\n'}
+    //       isReadyToCapture: {isReadyToCapture.toString()}
+    //       {'\n'}
+    //       photoPath: {photoPath}
+    //       {'\n'}
+    //       isFaceVerified: {isFaceVerified}
+    //       {'\n'}
+    //       isCardValid: {isCardValid}
+    //       {'\n'}
+    //       state: {JSON.stringify(state)}
+    //     </Text>
+    //   </SafeAreaView>
+    // );
   };
 
   return <SafeAreaView>{renderContent()}</SafeAreaView>;

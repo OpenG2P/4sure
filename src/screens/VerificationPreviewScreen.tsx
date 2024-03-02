@@ -13,7 +13,6 @@ interface VerificationPreviewScreenProps {
 export const VerificationPreviewScreen: React.FC<
   VerificationPreviewScreenProps
 > = ({photoPath, onRetake, onVerify}) => {
-  console.log('Photo path:', photoPath);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.textContainer}>

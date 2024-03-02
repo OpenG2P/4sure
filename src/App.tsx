@@ -95,7 +95,6 @@ export default function App() {
       .startTransfer()
       .then(vc => {
         setResult(JSON.parse(vc));
-        console.log('VC Data:', vc);
       })
       .catch(err => {
         setError(err);
@@ -134,7 +133,6 @@ export default function App() {
       resultPhotoB64 = resultPhotoB64.replace(base64Pattern, '');
     }
     const comparisonResult = await faceCompare(resultPhotoB64, capturedPhoto);
-    console.log('ComparisonResult:', comparisonResult);
     if (comparisonResult) {
       console.log('Face comparison successful: The faces match.');
       setIsFaceVerified('successful');
@@ -176,7 +174,6 @@ export default function App() {
       vc_data: 'vc_data_sample',
     });
 
-    console.log('Returning data for UIN:', uin);
     NativeModules.ODKDataModule.returnDataToODKCollect(jsonData);
   };
 

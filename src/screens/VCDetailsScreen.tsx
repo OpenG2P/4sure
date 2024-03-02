@@ -32,12 +32,15 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
   setIsCardValid,
 }) => {
   let generatedOn = '';
+  let fullName = [];
   if (vcData?.verifiableCredential?.credential?.credentialSubject) {
-    vcData = vcData.verifiableCredential.credential.credentialSubject;
     generatedOn = vcData?.generatedOn;
+    vcData = vcData.verifiableCredential.credential.credentialSubject;
+    fullName = [vcData?.fullName];
   } else {
     generatedOn = vcData?.generatedOn;
     vcData = vcData?.verifiableCredential?.credentialSubject;
+    fullName = vcData?.fullName;
   }
   const validateCards = () => {
     if (
@@ -60,7 +63,7 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
         </Text> */}
         <NationalCard
           source={{uri: 'file://' + vcPhotoPath}}
-          fullName={vcData?.fullName}
+          fullName={fullName}
           isVerified={vcData?.isVerified}
           isPhotoIDVerified={isIdVerified}
           uin={vcData?.UIN}
