@@ -8,24 +8,17 @@ interface VerificationPreviewScreenProps {
   photoPath: string;
   onRetake: () => void;
   onVerify: () => void;
-  onBack: () => void;
 }
 
 export const VerificationPreviewScreen: React.FC<
   VerificationPreviewScreenProps
-> = ({photoPath, onRetake, onVerify, onBack}) => {
-  console.log('Photo path:', photoPath);
+> = ({photoPath, onRetake, onVerify}) => {
   return (
     <SafeAreaView style={styles.container}>
-      <BackButton
-        style={styles.backButtonStyle}
-        source={require('../../assets/images/back.png')}
-        onPress={onBack}
-      />
       <View style={styles.textContainer}>
         <Text style={theme.headingText}>Preview</Text>
         <Text style={theme.subHeadingText}>
-          Please confirm and proceed with verification.
+          Would you like to proceed with this image?
         </Text>
       </View>
       <Image source={{uri: 'file://' + photoPath}} style={styles.imageStyle} />
@@ -36,9 +29,9 @@ export const VerificationPreviewScreen: React.FC<
           style={styles.buttonStyle}
         />
         <ButtonPrimary
-          title="VERIFY"
+          title="AUTHENTICATE"
           onPress={onVerify}
-          style={styles.buttonStyle}
+          style={styles.buttonRowStyle}
         />
       </View>
     </SafeAreaView>
@@ -69,10 +62,16 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    // width: '100%',
+    width: '100%',
+    // marginTop: 20,
     // paddingHorizontal: 20,
   },
   buttonStyle: {
+    flex: 0.5,
+    marginHorizontal: 10,
+    marginTop: 50,
+  },
+  buttonRowStyle: {
     flex: 1,
     marginHorizontal: 10,
     marginTop: 50,

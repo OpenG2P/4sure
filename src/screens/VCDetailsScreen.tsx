@@ -1,5 +1,5 @@
-import React from 'react';
-import {View, Text, SafeAreaView, StyleSheet} from 'react-native';
+import React, {useEffect} from 'react';
+import {View, Image, Text, SafeAreaView, StyleSheet} from 'react-native';
 import {
   NationalCard,
   BeneficiaryCard,
@@ -17,7 +17,6 @@ interface VCDetailsScreenProps {
   onNationalIDClick: () => void;
   onBeneficiaryIDClick: () => void;
   onCapturePhoto: () => void;
-  onBack: () => void;
   setIsCardValid: (state: string) => void;
 }
 
@@ -31,40 +30,45 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
   onBeneficiaryIDClick,
   onCapturePhoto,
   setIsCardValid,
-  onBack,
 }) => {
+  let generatedOn = '';
+  let fullName = [];
+  if (vcData?.verifiableCredential?.credential?.credentialSubject) {
+    generatedOn = vcData?.generatedOn;
+    vcData = vcData.verifiableCredential.credential.credentialSubject;
+    fullName = [vcData?.fullName];
+  } else {
+    generatedOn = vcData?.generatedOn;
+    vcData = vcData?.verifiableCredential?.credentialSubject;
+    fullName = vcData?.fullName;
+  }
   const validateCards = () => {
-    console.log('Validating both the cards UIN');
     if (
-      vcData?.id ===
+      vcData?.UIN ===
       beneficiaryVCData?.verifiableCredential?.credential?.credentialSubject
-        ?.UIN
+        ?.nationalId
     ) {
       setIsCardValid('valid');
     } else {
       setIsCardValid('invalid');
     }
   };
+
   return (
     <SafeAreaView style={styles.container}>
-      <BackButton
-        style={styles.backButtonStyle}
-        source={require('../../assets/images/back.png')}
-        onPress={onBack}
-      />
       <View style={styles.detailsContainer}>
-        <Text style={theme.headingText}>Add Your ID Cards</Text>
+        <Text style={[theme.headingText, {fontSize: 28}]}>e-Cards</Text>
         {/* <Text style={theme.subHeadingText}>
           Add VCs here to verify the details
         </Text> */}
         <NationalCard
           source={{uri: 'file://' + vcPhotoPath}}
-          fullName={vcData?.credential?.fullName}
+          fullName={fullName}
           isVerified={vcData?.isVerified}
           isPhotoIDVerified={isIdVerified}
-          uin={vcData?.id}
-          idType={vcData?.idType}
-          generatedOn={vcData?.generatedOn}
+          uin={vcData?.UIN}
+          idType={'National Card'}
+          generatedOn={generatedOn}
           onCapturePhoto={onCapturePhoto}
           onPress={onNationalIDClick}
         />
@@ -73,6 +77,10 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
           fullName={
             beneficiaryVCData?.verifiableCredential?.credential
               ?.credentialSubject?.fullName?.[0]?.value
+          }
+          programName={
+            beneficiaryVCData?.verifiableCredential?.credential
+              ?.credentialSubject?.programName?.[0]?.value
           }
           isVerified={beneficiaryVCData?.isVerified}
           uin={
@@ -85,7 +93,7 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
         />
         {isIdVerified && beneficiaryVCPhotoPath && (
           <ButtonPrimary
-            title="VALIDATE"
+            title="MATCH"
             onPress={validateCards}
             style={styles.buttonStyle}
           />

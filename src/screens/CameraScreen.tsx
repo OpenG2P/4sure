@@ -10,15 +10,9 @@ interface CameraScreenProps {
   setPhoto: any;
   setIsReadyToCapture: any;
   setPhotoPath: any;
-  restartProcess: any;
 }
 
-export const CameraScreen: React.FC<CameraScreenProps> = ({
-  setPhoto,
-  setIsReadyToCapture,
-  setPhotoPath,
-  restartProcess,
-}) => {
+export const CameraScreen: React.FC<CameraScreenProps> = ({setPhoto}) => {
   const [cameraPermission, setCameraPermission] = useState('denied');
   const device = useCameraDevice('back');
   const cameraRef = useRef<Camera>(null);
@@ -31,17 +25,10 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({
   async function requestCameraPermission() {
     const status = await request(PERMISSIONS.ANDROID.CAMERA);
     setCameraPermission(status);
-    console.log('Camera permission status:', status);
     if (status !== 'granted') {
       openSettings().catch(() => console.warn('Cannot open settings'));
     }
   }
-
-  const goBack = () => {
-    setIsReadyToCapture(false);
-    setPhotoPath('');
-    restartProcess();
-  };
 
   const takePicture = async () => {
     if (device && cameraPermission === 'granted') {
@@ -66,7 +53,7 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({
     );
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView>
       {cameraPermission === 'granted' && (
         <>
           <View style={styles.container}>
@@ -77,11 +64,6 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({
               device={device}
               isActive={true}
               photo={true}
-            />
-            <BackButton
-              style={styles.backButtonStyle}
-              source={require('../../assets/images/back.png')}
-              onPress={goBack}
             />
             <View style={styles.overlayContainer}>
               <View style={styles.mainContainer}>
@@ -104,11 +86,6 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({
 };
 
 const styles = StyleSheet.create({
-  backButtonStyle: {
-    position: 'absolute',
-    bottom: 300,
-    right: 110,
-  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -148,9 +125,9 @@ const styles = StyleSheet.create({
   },
   preview: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
+    top: '-6%',
+    left: -2,
+    right: -2,
     bottom: 0,
   },
 });

@@ -1,7 +1,12 @@
 import React from 'react';
 import {View, Text, SafeAreaView, StyleSheet, Image} from 'react-native';
 import theme from '@/utils/theme';
-import {ButtonPrimary, BackButton, ScreenImage} from '@/components';
+import {
+  ButtonPrimary,
+  ButtonTertiary,
+  BackButton,
+  ScreenImage,
+} from '@/components';
 
 interface WaitingScreenProps {
   onDisconnect: () => void;
@@ -20,7 +25,7 @@ export const WaitingScreen: React.FC<WaitingScreenProps> = ({
         onPress={onBack}
       />
       <Text style={theme.headingText}>
-        Waiting for beneficiary to share the VC
+        Waiting for beneficiary to share the e-Card
       </Text>
       <View style={styles.mainContainer}>
         <ScreenImage
@@ -28,7 +33,7 @@ export const WaitingScreen: React.FC<WaitingScreenProps> = ({
           source={require('../../assets/images/waiting_image.png')}
         />
       </View>
-      <ButtonPrimary style={null} title="DISCONNECT" onPress={onDisconnect} />
+      <ButtonTertiary style={null} title="DISCONNECT" onPress={onDisconnect} />
     </SafeAreaView>
   );
 };

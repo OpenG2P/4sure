@@ -11,6 +11,7 @@ export function BeneficiaryCard(props: {
   uin: string;
   generatedOn: string;
   isVerified: string;
+  programName: string;
   onPress: () => void;
 }) {
   var maskedUIN = '';
@@ -29,12 +30,12 @@ export function BeneficiaryCard(props: {
               <Text style={styles.topTitle}>Full Name</Text>
               <Text style={styles.name}>{props.fullName}</Text>
               <Text style={styles.topTitle}>ID Type</Text>
-              <Text style={styles.detail}>
+              <Text style={styles.topDetail}>
                 {props.idType === 'UIN' ? 'National Card' : props.idType}{' '}
               </Text>
             </View>
           </View>
-          <Text style={styles.title}>UIN</Text>
+          <Text style={styles.title}>Beneficiary ID</Text>
           <Text style={[styles.detail, {color: theme.colors.textTertiary}]}>
             ******{maskedUIN}
           </Text>
@@ -52,7 +53,7 @@ export function BeneficiaryCard(props: {
           </View>
           <View style={styles.bottomLine} />
           <Text style={styles.title}>Program Name</Text>
-          <Text style={styles.programDetail}>National Beneficiary Program</Text>
+          <Text style={styles.programDetail}>{props.programName}</Text>
         </View>
       </View>
     );
@@ -60,7 +61,7 @@ export function BeneficiaryCard(props: {
   return (
     <View style={styles.emptyCardContainer}>
       <View>
-        <Text style={styles.emptyTopTitle}>Beneficiary ID</Text>
+        <Text style={styles.emptyTopTitle}>Add Beneficiary ID</Text>
         <TouchableOpacity
           style={styles.placeHolderContainer}
           onPress={props.onPress}>
@@ -77,14 +78,14 @@ export function BeneficiaryCard(props: {
 
 const styles = StyleSheet.create({
   plusSign: {
-    fontSize: 55,
-    paddingBottom: 10,
+    fontSize: 45,
+    paddingBottom: 0,
     color: theme.colors.lineColor,
-    fontWeight: '200',
+    fontWeight: '300',
   },
   placeHolderContainer: {
-    left: '43%',
-    marginTop: 15,
+    left: '50%',
+    marginTop: 20,
     marginBottom: 15,
   },
   placeHolder: {
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
   emptyTopTitle: {
     fontSize: 18,
     color: theme.colors.primary,
-    marginRight: 90,
+    marginRight: 60,
     fontWeight: 'bold',
   },
   emptyCardContainer: {
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2.22,
     elevation: 3,
     alignItems: 'center',
-    width: 300,
+    width: 315,
     height: 200,
     marginBottom: 15,
     marginTop: 15,
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2.22,
     elevation: 3,
     alignItems: 'center',
-    width: 300,
+    width: 315,
     marginBottom: 0,
     marginTop: 15,
   },
@@ -154,16 +155,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#777',
     marginRight: 0,
+    left: '0%',
   },
   title: {
     fontSize: 14,
     color: '#777',
   },
   name: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '500',
     color: theme.colors.textTertiary,
     marginBottom: 8,
+    left: '0%',
+  },
+  topDetail: {
+    fontSize: 16,
+    color: theme.colors.textSecondary,
+    marginBottom: 8,
+    fontWeight: '500',
+    left: '0%',
   },
   detail: {
     fontSize: 16,
@@ -172,14 +182,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   programDetail: {
-    fontSize: 16,
+    fontSize: 15,
     color: theme.colors.textSecondary,
     marginBottom: 0,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     alignItems: 'center',
   },
   statusContainer: {
@@ -189,14 +199,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#777',
     marginBottom: 0,
-    marginLeft: 50,
+    marginLeft: '62%',
   },
   status: {
     fontSize: 16,
     color: theme.colors.textSecondary,
     marginBottom: 10,
     fontWeight: 'bold',
-    marginLeft: 50,
+    marginLeft: '62%',
   },
   bottomLine: {
     borderBottomWidth: 2,

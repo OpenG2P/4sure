@@ -26,6 +26,9 @@ interface MainScreenProps {
   verifyFace: any;
   setCapturedPhoto: any;
   beneficiaryVCData: any;
+  openedByIntent: any;
+  setIsBackEnabled: any;
+  setOnBack: any;
 }
 
 const MainScreen: React.FC<MainScreenProps> = props => {
@@ -35,34 +38,129 @@ const MainScreen: React.FC<MainScreenProps> = props => {
   const [beneficiaryVCPhotoPath, setBeneficiaryVCPhotoPath] = useState('');
   const [isCardValid, setIsCardValid] = useState('unverified');
 
-  const {state, vcData, beneficiaryVCData, isFaceVerified} = props;
+  const {
+    state,
+    vcData,
+    beneficiaryVCData,
+    setIsFaceVerified,
+    isFaceVerified,
+    setIsBackEnabled,
+    setOnBack,
+    setVCData,
+  } = props;
 
   useEffect(() => {
     if (vcData && !vcPhotoPath) {
       setVCPhoto();
     }
-  }, [vcData, vcPhotoPath]);
-
-  useEffect(() => {
     if (beneficiaryVCData && !beneficiaryVCPhotoPath) {
       setBeneficiaryVCPhoto();
     }
-  }, [beneficiaryVCData, beneficiaryVCPhotoPath]);
+    if (!vcData && !isReadyToCapture && !photoPath && state.name === 'Idle') {
+      setOnBack(() => () => {
+        restartProcess(false);
+      });
+      setIsBackEnabled(false);
+    } else if (vcData && isReadyToCapture && !photoPath) {
+      setOnBack(() => () => {
+        setVCData(null);
+        setIsReadyToCapture(false);
+        setPhotoPath('');
+      });
+      setIsBackEnabled(true);
+    } else if (vcData && photoPath && isFaceVerified === 'unverified') {
+      setOnBack(() => () => {
+        setPhotoPath('');
+        props.setCapturedPhoto(null);
+        props.setIsFaceVerified('unverified');
+        setIsReadyToCapture(true);
+      });
+      setIsBackEnabled(true);
+    } else if (vcPhotoPath || beneficiaryVCPhotoPath) {
+      setOnBack(() => () => {
+        restartProcess(false);
+      });
+      setIsBackEnabled(true);
+    } else if (state.name === 'Advertising') {
+      setOnBack(() => () => {
+        restartProcess(false);
+      });
+      setIsBackEnabled(true);
+    } else if (vcData && !isReadyToCapture && !photoPath) {
+      setOnBack(() => () => {
+        restartProcess();
+      });
+      setIsBackEnabled(true);
+    } else if (
+      vcData &&
+      isFaceVerified === 'successful' &&
+      isCardValid === 'unverified'
+    ) {
+      setOnBack(() => () => {
+        restartProcess();
+      });
+      setIsBackEnabled(true);
+    }
+    if (vcData && isFaceVerified === 'failed') {
+      setIsBackEnabled(false);
+    }
+    if (isCardValid === 'valid') {
+      setIsBackEnabled(false);
+    } else if (isCardValid === 'invalid') {
+      setIsBackEnabled(false);
+    }
+  }, [
+    vcPhotoPath,
+    beneficiaryVCPhotoPath,
+    vcData,
+    isReadyToCapture,
+    photoPath,
+    isFaceVerified,
+    isCardValid,
+    beneficiaryVCData,
+    state,
+  ]);
 
-  const restartProcess = () => {
+  const restartProcess = (startAdvertising = true) => {
     props.setVCData(null);
     props.ovpble.stopTransfer();
     setPhotoPath('');
     setIsReadyToCapture(false);
+    // Delete the file if it exists
+    RNFS.unlink(vcPhotoPath)
+      .then(() => {
+        console.log('File deleted');
+      })
+      .catch(err => {
+        console.error('Error deleting file:', err.message);
+      });
     setVcPhotoPath('');
+    props.setBeneficiaryVCData(null);
+    // Delete the file if it exists
+    RNFS.unlink(beneficiaryVCPhotoPath)
+      .then(() => {
+        console.log('File deleted');
+      })
+      .catch(err => {
+        console.error('Error deleting file:', err.message);
+      });
+    setBeneficiaryVCPhotoPath('');
     props.setIsFaceVerified('unverified');
-    props.startNationalIDTransfer();
+    if (startAdvertising) {
+      props.startNationalIDTransfer();
+    }
     setIsCardValid('unverified');
   };
 
   const setVCPhoto = () => {
-    console.log('VC Data Captured');
-    let vcPhotoBase64 = props?.vcData?.credential?.biometrics.face;
+    let vcPhotoBase64 = '';
+    if (props?.vcData?.verifiableCredential?.credential) {
+      vcPhotoBase64 =
+        props?.vcData?.verifiableCredential?.credential?.credentialSubject
+          ?.face;
+    } else {
+      vcPhotoBase64 = props?.vcData?.credential?.biometrics?.face;
+    }
 
     // Remove data URL scheme if present
     const base64Pattern = /^data:image\/[a-z]+;base64,/;
@@ -70,15 +168,14 @@ const MainScreen: React.FC<MainScreenProps> = props => {
       vcPhotoBase64 = vcPhotoBase64.replace(base64Pattern, '');
     }
 
-    const path = RNFS.TemporaryDirectoryPath + '/face.jpg';
+    const path = RNFS.TemporaryDirectoryPath + '/face_' + Date.now() + '.jpg';
 
     RNFS.writeFile(path, vcPhotoBase64, 'base64')
       .then(() => {
-        console.log('File written to:', path);
         setVcPhotoPath(path);
       })
       .catch(err => {
-        console.error('Error writing file:', err.message);
+        console.log('Error writing file:', err.message);
       });
   };
 
@@ -97,7 +194,8 @@ const MainScreen: React.FC<MainScreenProps> = props => {
       );
     }
 
-    const path = RNFS.TemporaryDirectoryPath + '/beneficiary_face.jpg';
+    const path =
+      RNFS.TemporaryDirectoryPath + '/beneficiary_face_' + Date.now() + '.jpg';
 
     RNFS.writeFile(path, beneficiaryVCPhotoBase64, 'base64')
       .then(() => {
@@ -105,12 +203,17 @@ const MainScreen: React.FC<MainScreenProps> = props => {
         setBeneficiaryVCPhotoPath(path);
       })
       .catch(err => {
-        console.error('Error writing file:', err.message);
+        console.log('Error writing file:', err.message);
       });
   };
 
   const renderContent = () => {
-    if (!vcData && !isReadyToCapture && !photoPath && state.name === 'Idle') {
+    if (
+      !vcData &&
+      !isReadyToCapture &&
+      !photoPath &&
+      (state.name === 'Idle' || state.name === 'Received')
+    ) {
       return (
         <VCDetailsScreen
           beneficiaryVCData={beneficiaryVCData}
@@ -119,9 +222,6 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           isIdVerified={false}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
-          onBack={() => {
-            null;
-          }}
           onCapturePhoto={() => {
             null;
           }}
@@ -147,7 +247,6 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           isIdVerified={false}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
-          onBack={restartProcess}
           onCapturePhoto={() => setIsReadyToCapture(true)}
           onNationalIDClick={() => {
             null;
@@ -163,9 +262,8 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           setPhoto={(base64: string, path: string) => {
             props.setCapturedPhoto(base64);
             setPhotoPath(path);
-            console.log('Photo captured:', path);
+            setIsFaceVerified('unverified');
           }}
-          restartProcess={restartProcess}
           setIsReadyToCapture={setIsReadyToCapture}
           setPhotoPath={setPhotoPath}
         />
@@ -176,13 +274,11 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           photoPath={photoPath}
           onRetake={() => {
             setPhotoPath('');
+            props.setCapturedPhoto(null);
+            props.setIsFaceVerified('unverified');
             setIsReadyToCapture(true);
           }}
           onVerify={props.verifyFace}
-          onBack={() => {
-            setPhotoPath('');
-            setIsReadyToCapture(true);
-          }}
         />
       );
     } else if (
@@ -198,7 +294,6 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           isIdVerified={true}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
-          onBack={restartProcess}
           onCapturePhoto={() => setIsReadyToCapture(true)}
           onNationalIDClick={() => {
             null;
@@ -209,31 +304,65 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     } else if (vcData && isFaceVerified === 'failed') {
       return (
         <VerificationFailureScreen
+          openedByIntent={props.openedByIntent}
           textData="Sorry! We couldn’t verify your photo. Please try again."
           onRetry={() => {
             setPhotoPath('');
             setIsReadyToCapture(true);
           }}
+          onBack={() => {
+            restartProcess(false);
+          }}
           onSubmitWithoutVerification={props.returnVC}
         />
       );
     } else if (isCardValid === 'valid') {
-      return <VerificationSuccessScreen onSubmit={props.returnVC} />;
+      return (
+        <VerificationSuccessScreen
+          onSubmit={props.returnVC}
+          openedByIntent={props.openedByIntent}
+          onBack={() => {
+            restartProcess(false);
+          }}
+        />
+      );
     } else if (isCardValid === 'invalid') {
       return (
         <VerificationFailureScreen
-          textData="Sorry! The UINs do not match"
+          openedByIntent={props.openedByIntent}
+          textData="UIN do not match"
           onRetry={() => {
             setIsCardValid('unverified');
             setBeneficiaryVCPhotoPath('');
             props.setBeneficiaryVCData(null);
           }}
+          onBack={() => {
+            restartProcess(false);
+          }}
           onSubmitWithoutVerification={props.returnVC}
         />
       );
     }
-
-    return <Text>No active state</Text>;
+    // Enable this for debugging
+    // return (
+    //   <SafeAreaView style={{backgroundColor: 'white'}}>
+    //     <Text style={{color: 'black', backgroundColor: 'white'}}>
+    //       Debugging Information:
+    //       {'\n'}
+    //       nationalIDData: {JSON.stringify(vcData)}
+    //       {'\n'}
+    //       isReadyToCapture: {isReadyToCapture.toString()}
+    //       {'\n'}
+    //       photoPath: {photoPath}
+    //       {'\n'}
+    //       isFaceVerified: {isFaceVerified}
+    //       {'\n'}
+    //       isCardValid: {isCardValid}
+    //       {'\n'}
+    //       state: {JSON.stringify(state)}
+    //     </Text>
+    //   </SafeAreaView>
+    // );
   };
 
   return <SafeAreaView>{renderContent()}</SafeAreaView>;

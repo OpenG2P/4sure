@@ -19,6 +19,7 @@ export function NationalCard(props: {
   var maskedUIN = '';
   var fullNameEng = '';
   var generatedOnWithoutTime = '';
+
   if (props.fullName) {
     maskedUIN = props.uin.length > 4 ? props.uin.slice(-4) : props.uin;
     fullNameEng = props.fullName.find(
@@ -36,17 +37,12 @@ export function NationalCard(props: {
               <Text style={styles.topTitle}>Full Name</Text>
               <Text style={styles.name}>{fullNameEng}</Text>
               <Text style={styles.topTitle}>ID Type</Text>
-              <Text style={styles.detail}>
+              <Text style={styles.topDetail}>
                 {props.idType === 'UIN' ? 'National Card' : props.idType}{' '}
               </Text>
             </View>
-            {props.isPhotoIDVerified && (
-              <View>
-                <Text style={styles.verifiedSign}>VERIFIED</Text>
-              </View>
-            )}
           </View>
-          <Text style={styles.title}>UIN</Text>
+          <Text style={styles.title}>National ID</Text>
           <Text style={styles.detail}>******{maskedUIN}</Text>
           <View style={styles.row}>
             <View>
@@ -62,12 +58,17 @@ export function NationalCard(props: {
           </View>
           <View style={styles.bottomLine} />
           {props.isPhotoIDVerified ? (
-            <View style={styles.bottomRectangle} />
+            <>
+              <View>
+                <Text style={styles.verifiedSign}>AUTHENTICATED</Text>
+              </View>
+            </>
           ) : (
             <CardButton
-              title="VERIFY"
+              title="AUTHENTICATE"
               onPress={props.onCapturePhoto}
               style={styles.buttonStyle}
+              image={require('../../assets/images/cam.png')}
             />
           )}
         </View>
@@ -77,7 +78,7 @@ export function NationalCard(props: {
   return (
     <View style={styles.emptyCardContainer}>
       <View>
-        <Text style={styles.emptyTopTitle}>National ID</Text>
+        <Text style={styles.emptyTopTitle}>Add National ID</Text>
         <TouchableOpacity
           style={styles.placeHolderContainer}
           onPress={props.onPress}>
@@ -104,18 +105,29 @@ const styles = StyleSheet.create({
     padding: 1,
     paddingLeft: 6,
     paddingTop: 4,
-    bottom: 30,
+    width: 92,
   },
-  buttonStyle: {marginBottom: -5},
+  buttonStyle: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: 'green',
+    borderWidth: 2,
+    borderRadius: 15,
+    marginRight: 0,
+    padding: 1,
+    paddingLeft: 5,
+    paddingTop: 0,
+    width: 125,
+  },
   plusSign: {
-    fontSize: 55,
-    paddingBottom: 10,
+    fontSize: 45,
+    paddingBottom: 0,
     color: theme.colors.lineColor,
-    fontWeight: '200',
+    fontWeight: '300',
   },
   placeHolderContainer: {
     left: '50%',
-    marginTop: 15,
+    marginTop: 20,
     marginBottom: 15,
   },
   placeHolder: {
@@ -131,7 +143,7 @@ const styles = StyleSheet.create({
   emptyTopTitle: {
     fontSize: 18,
     color: theme.colors.primary,
-    marginRight: 90,
+    marginRight: 60,
     fontWeight: 'bold',
   },
   emptyCardContainer: {
@@ -145,7 +157,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2.22,
     elevation: 3,
     alignItems: 'center',
-    width: 300,
+    width: 315,
     height: 200,
     marginBottom: 15,
     marginTop: 15,
@@ -167,7 +179,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2.22,
     elevation: 3,
     alignItems: 'center',
-    width: 300,
+    width: 315,
     marginBottom: 0,
     marginTop: 15,
   },
@@ -184,16 +196,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#777',
     marginRight: 0,
+    left: '5%',
   },
   title: {
     fontSize: 14,
     color: '#777',
   },
   name: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '500',
     color: '#000',
     marginBottom: 8,
+    left: '5%',
+  },
+  topDetail: {
+    fontSize: 16,
+    color: theme.colors.textSecondary,
+    marginBottom: 8,
+    fontWeight: '500',
+    left: '5%',
   },
   detail: {
     fontSize: 16,
@@ -203,7 +224,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     alignItems: 'center',
   },
   statusContainer: {
@@ -213,14 +234,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#777',
     marginBottom: 0,
-    marginLeft: 50,
+    marginLeft: '62%',
   },
   status: {
     fontSize: 16,
     color: theme.colors.textSecondary,
     marginBottom: 10,
     fontWeight: 'bold',
-    marginLeft: 50,
+    marginLeft: '62%',
   },
   bottomLine: {
     borderBottomWidth: 2,

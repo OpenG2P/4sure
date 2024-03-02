@@ -16,7 +16,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:textColor="#ffffff"
+        android:layout_marginBottom="26dp"
+        android:gravity="center_horizontal"
         android:text="@string/by_openg2p"
-        android:layout_marginBottom="16dp"/>
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textFontWeight="300"
+        android:textSize="20sp" />
 </LinearLayout>

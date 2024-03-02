@@ -5,12 +5,14 @@ import {
   Platform,
   View,
   NativeModules,
+  Image,
+  // Linking,
 } from 'react-native';
-import {request, PERMISSIONS, openSettings} from 'react-native-permissions';
+import {request, PERMISSIONS} from 'react-native-permissions';
 import {configure, faceCompare} from '@iriscan/biometric-sdk-react-native';
 import OvpBle, {useUI} from '@mosip/ble-verifier-sdk';
 import SplashScreen from 'react-native-splash-screen';
-
+import {BackButton} from '@/components';
 import MainScreen from './screens/MainScreen';
 
 const ovpble = new OvpBle({deviceName: 'example'});
@@ -23,24 +25,44 @@ export default function App() {
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const {state} = useUI(ovpble);
   const [isFaceVerified, setIsFaceVerified] = React.useState('unverified');
+  const [openedByIntent, setOpenedByIntent] = useState(false);
+
+  const [isBackEnabled, setIsBackEnabled] = useState(false);
+  const [onBack, setOnBack] = useState<(enabled: boolean) => void>(
+    () => () => {},
+  );
 
   useEffect(() => {
     SplashScreen.hide();
     requestBluetoothPermissions();
     configureBiometricSDK();
+    NativeModules.ODKDataModule.hasFullNameExtra()
+      .then((intentExists: any) => {
+        setOpenedByIntent(intentExists);
+      })
+      .catch((error: any) => {
+        console.error('Error checking for intent:', error);
+      });
+    setIsBackEnabled(false);
   }, []);
 
   async function requestBluetoothPermissions() {
-    if (Platform.OS === 'android' && Platform.Version >= 31) {
-      await request(PERMISSIONS.ANDROID.BLUETOOTH_ADVERTISE);
-      await request(PERMISSIONS.ANDROID.BLUETOOTH_CONNECT);
-    } else if (Platform.OS === 'android') {
-      await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.BLUETOOTH,
-      );
-      await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN,
-      );
+    if (Platform.OS === 'android') {
+      if (Platform.Version >= 31) {
+        // For Android 12 and above
+        await request(PERMISSIONS.ANDROID.BLUETOOTH_ADVERTISE);
+        await request(PERMISSIONS.ANDROID.BLUETOOTH_CONNECT);
+      } else {
+        // For Android 10 and below
+        try {
+          await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.BLUETOOTH,
+            PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN,
+          ]);
+        } catch (err) {
+          console.error('Error requesting Bluetooth permissions:', err);
+        }
+      }
     }
   }
 
@@ -98,18 +120,24 @@ export default function App() {
       setIsFaceVerified('failed');
       return;
     }
-    var resultPhotoB64 = result.credential.biometrics.face;
+    let resultPhotoB64 = '';
+    if (result?.verifiableCredential?.credential) {
+      resultPhotoB64 =
+        result?.verifiableCredential?.credential?.credentialSubject?.face;
+    } else {
+      resultPhotoB64 = result?.credential?.biometrics?.face;
+    }
+
     const base64Pattern = /^data:image\/[a-z]+;base64,/;
     if (resultPhotoB64.match(base64Pattern)) {
       resultPhotoB64 = resultPhotoB64.replace(base64Pattern, '');
     }
     const comparisonResult = await faceCompare(resultPhotoB64, capturedPhoto);
-    console.log('ComparisonResult:', comparisonResult);
     if (comparisonResult) {
       console.log('Face comparison successful: The faces match.');
       setIsFaceVerified('successful');
     } else {
-      console.error('Face comparison failed: The faces do not match.');
+      console.log('Face comparison failed: The faces do not match.');
       setIsFaceVerified('failed');
     }
   };
@@ -121,28 +149,59 @@ export default function App() {
     }
 
     const fullNameEng =
-      result.verifiableCredential.credentialSubject.fullName.find(
+      result.verifiableCredential?.credential?.credentialSubject?.fullName.find(
         (fn: {language: string}) => fn.language === 'eng',
       ).value;
-    const genderEng = result.verifiableCredential.credentialSubject.gender.find(
-      (g: {language: string}) => g.language === 'eng',
-    ).value;
-    const dob = result.verifiableCredential.credentialSubject.dateOfBirth;
-    const uin = result.verifiableCredential.credentialSubject.UIN;
+    const genderEng =
+      result.verifiableCredential?.credential?.credentialSubject?.gender.find(
+        (g: {language: string}) => g.language === 'eng',
+      ).value;
+    const dob =
+      result.verifiableCredential?.credential?.credentialSubject?.dateOfBirth;
+    const uin = result.verifiableCredential?.credential?.credentialSubject?.UIN;
+    const programName =
+      result.verifiableCredential?.credential?.credentialSubject?.programName.find(
+        (fn: {language: string}) => fn.language === 'eng',
+      ).value;
 
     const jsonData = JSON.stringify({
       full_name: fullNameEng,
       gender: genderEng,
       dob: dob,
       uin: uin,
+      program_name: programName,
+      is_photo_verified: isFaceVerified === 'successful',
+      vc_data: 'vc_data_sample',
     });
 
-    console.log('Returning data for UIN:', uin);
     NativeModules.ODKDataModule.returnDataToODKCollect(jsonData);
   };
 
   return (
     <View style={styles.container}>
+      {isBackEnabled && (
+        <BackButton
+          style={{
+            marginTop: '30%',
+            right: '65%',
+            height: 45,
+            width: 140,
+            // position: 'absolute',
+          }}
+          source={require('../assets/images/back.png')}
+          onPress={() => onBack(true)}
+        />
+      )}
+      <Image
+        style={{
+          left: '65%',
+          marginTop: '4%',
+          height: 45,
+          width: 140,
+          position: 'absolute',
+        }}
+        source={require('../assets/images/logo_dark.png')}
+      />
       <MainScreen
         state={state}
         setVCData={setResult}
@@ -158,6 +217,9 @@ export default function App() {
         beneficiaryVCData={beneficiaryVC}
         capturedPhoto={capturedPhoto}
         setCapturedPhoto={setCapturedPhoto}
+        openedByIntent={openedByIntent}
+        setIsBackEnabled={setIsBackEnabled}
+        setOnBack={setOnBack}
       />
     </View>
   );
