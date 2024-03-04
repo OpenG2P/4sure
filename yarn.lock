@@ -12,9 +12,9 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
-    "@iriscan/biometric-sdk-react-native": ^0.2.8
-    "@mosip/ble-verifier-sdk": ^0.1.1
-    "@mosip/tuvali": ^0.4.9
+    "@iriscan/biometric-sdk-react-native": 0.2.8
+    "@mosip/ble-verifier-sdk": 0.1.1
+    "@mosip/tuvali": 0.4.9
     "@react-native/babel-preset": 0.73.20
     "@react-native/eslint-config": 0.73.2
     "@react-native/metro-config": 0.73.4
@@ -32,6 +32,7 @@ __metadata:
     react-native-fs: ^2.20.0
     react-native-permissions: ^4.1.1
     react-native-qrcode-svg: ^6.3.0
+    react-native-simple-toast: ^3.3.0
     react-native-splash-screen: ^3.3.0
     react-native-svg: ^14.1.0
     react-native-vector-icons: ^10.0.3
@@ -1756,7 +1757,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iriscan/biometric-sdk-react-native@npm:^0.2.8":
+"@iriscan/biometric-sdk-react-native@npm:0.2.8":
   version: 0.2.8
   resolution: "@iriscan/biometric-sdk-react-native@npm:0.2.8"
   peerDependencies:
@@ -2111,7 +2112,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mosip/ble-verifier-sdk@npm:^0.1.1":
+"@mosip/ble-verifier-sdk@npm:0.1.1":
   version: 0.1.1
   resolution: "@mosip/ble-verifier-sdk@npm:0.1.1"
   dependencies:
@@ -2123,7 +2124,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mosip/tuvali@npm:^0.4.9":
+"@mosip/tuvali@npm:0.4.9, @mosip/tuvali@npm:^0.4.9":
   version: 0.4.9
   resolution: "@mosip/tuvali@npm:0.4.9"
   peerDependencies:
@@ -8086,6 +8087,16 @@ __metadata:
     react-native: ">=0.63.4"
     react-native-svg: ">=13.2.0"
   checksum: 28b521084b300fef669b5743742ed78c6f8899ed8e2e31ee1ac2c908c4ce6fd44cb50d9eeb541a2326b1ff796f4d9288bca2d75e58129569f089f051142b68ff
+  languageName: node
+  linkType: hard
+
+"react-native-simple-toast@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "react-native-simple-toast@npm:3.3.0"
+  peerDependencies:
+    react: "*"
+    react-native: ">=0.71.0"
+  checksum: 172bc130a3854a494c2fb840545e6a382a07a994e714289ed9d2d2eedc0d5e5f9c470619e7e778f1968e08d4a2d6d7addc7eb7405ad1712455f036bcc04ee4b4
   languageName: node
   linkType: hard
 

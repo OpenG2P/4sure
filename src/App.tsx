@@ -14,6 +14,7 @@ import OvpBle, {useUI} from '@mosip/ble-verifier-sdk';
 import SplashScreen from 'react-native-splash-screen';
 import {BackButton} from '@/components';
 import MainScreen from './screens/MainScreen';
+import Toast from 'react-native-simple-toast';
 
 const ovpble = new OvpBle({deviceName: 'example'});
 
@@ -80,7 +81,7 @@ export default function App() {
           },
         },
         matcher: {
-          threshold: 1.0,
+          threshold: 2.0,
         },
       },
     };
@@ -94,7 +95,18 @@ export default function App() {
     ovpble
       .startTransfer()
       .then(vc => {
-        setResult(JSON.parse(vc));
+        if (
+          JSON.parse(vc)?.verifiableCredential?.type?.includes(
+            'MOSIPVerifiableCredential',
+          ) ||
+          JSON.parse(vc)?.verifiableCredential?.credential?.type?.includes(
+            'MOSIPVerifiableCredential',
+          )
+        ) {
+          setResult(JSON.parse(vc));
+        } else {
+          Toast.show('Invalid ID received!', Toast.SHORT);
+        }
       })
       .catch(err => {
         setError(err);
@@ -104,10 +116,25 @@ export default function App() {
   const startBeneficiaryIDTransfer = () => {
     setBeneficiaryVC('');
     setBeneficiaryError(null);
+    if (!result) {
+      Toast.show('Please add the National ID first', Toast.SHORT);
+      return;
+    }
     ovpble
       .startTransfer()
       .then(vc => {
-        setBeneficiaryVC(JSON.parse(vc));
+        if (
+          JSON.parse(vc)?.verifiableCredential?.type?.includes(
+            'MOSIPVerifiableCredential',
+          ) ||
+          JSON.parse(vc)?.verifiableCredential?.credential?.type?.includes(
+            'MOSIPVerifiableCredential',
+          )
+        ) {
+          Toast.show('Invalid ID received!', Toast.SHORT);
+        } else {
+          setBeneficiaryVC(JSON.parse(vc));
+        }
       })
       .catch(err => {
         setBeneficiaryError(err);

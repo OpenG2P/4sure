@@ -19,6 +19,7 @@
     "react-native-fs": "^2.20.0",
     "react-native-permissions": "^4.1.1",
     "react-native-qrcode-svg": "^6.3.0",
+    "react-native-simple-toast": "^3.3.0",
     "react-native-splash-screen": "^3.3.0",
     "react-native-svg": "^14.1.0",
     "react-native-vector-icons": "^10.0.3",
