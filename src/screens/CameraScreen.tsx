@@ -2,7 +2,7 @@ import React, {useRef, useState, useEffect} from 'react';
 import {Button, StyleSheet, Text, View, SafeAreaView} from 'react-native';
 import {ButtonPrimary, BackButton} from '@/components';
 import theme from '@/utils/theme';
-import {Camera, useCameraDevice} from 'react-native-vision-camera';
+import {Camera, CameraApi, CameraType} from 'react-native-camera-kit';
 import {request, PERMISSIONS, openSettings} from 'react-native-permissions';
 import RNFS from 'react-native-fs';
 
@@ -14,8 +14,8 @@ interface CameraScreenProps {
 
 export const CameraScreen: React.FC<CameraScreenProps> = ({setPhoto}) => {
   const [cameraPermission, setCameraPermission] = useState('denied');
-  const device = useCameraDevice('back');
-  const cameraRef = useRef<Camera>(null);
+  const device = CameraType.Back;
+  const cameraRef = useRef<CameraApi>(null);
   const [cameraKey, setCameraKey] = useState(1);
 
   useEffect(() => {
@@ -34,13 +34,10 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({setPhoto}) => {
     if (device && cameraPermission === 'granted') {
       if (cameraRef.current == null) throw new Error('Camera ref is null!');
       if (cameraRef.current) {
-        const photo = await cameraRef.current.takePhoto({
-          qualityPrioritization: 'balanced',
-          enableShutterSound: true,
-        });
-        const photoBase64 = await RNFS.readFile(photo.path, 'base64');
+        const {uri} = await cameraRef.current.capture();
+        const photoBase64 = await RNFS.readFile(uri, 'base64');
         setCameraKey(prevKey => prevKey + 1);
-        setPhoto(photoBase64, photo.path);
+        setPhoto(photoBase64, uri);
       }
     }
   };
@@ -61,9 +58,7 @@ export const CameraScreen: React.FC<CameraScreenProps> = ({setPhoto}) => {
               key={cameraKey}
               ref={cameraRef}
               style={styles.preview}
-              device={device}
-              isActive={true}
-              photo={true}
+              cameraType={device}
             />
             <View style={styles.overlayContainer}>
               <View style={styles.mainContainer}>

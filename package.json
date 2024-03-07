@@ -16,14 +16,14 @@
     "babel-plugin-module-resolver": "^5.0.0",
     "react": "18.2.0",
     "react-native": "0.73.3",
+    "react-native-camera-kit": "^13.0.0",
     "react-native-fs": "^2.20.0",
     "react-native-permissions": "^4.1.1",
     "react-native-qrcode-svg": "^6.3.0",
     "react-native-simple-toast": "^3.3.0",
     "react-native-splash-screen": "^3.3.0",
     "react-native-svg": "^14.1.0",
-    "react-native-vector-icons": "^10.0.3",
-    "react-native-vision-camera": "^3.8.2"
+    "react-native-vector-icons": "^10.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
