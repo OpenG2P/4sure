@@ -19,18 +19,13 @@ export const WaitingScreen: React.FC<WaitingScreenProps> = ({
 }) => {
   return (
     <SafeAreaView style={styles.container}>
-      <BackButton
-        style={styles.backButtonStyle}
-        source={require('../../assets/images/back.png')}
-        onPress={onBack}
-      />
       <Text style={theme.headingText}>
         Waiting for beneficiary to share the e-Card
       </Text>
       <View style={styles.mainContainer}>
         <ScreenImage
           style={null}
-          source={require('../../assets/images/waiting_image.png')}
+          source={require('../../assets/images/waiting_anim.gif')}
         />
       </View>
       <ButtonTertiary style={null} title="DISCONNECT" onPress={onDisconnect} />
