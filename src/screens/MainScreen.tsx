@@ -50,6 +50,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
   } = props;
 
   useEffect(() => {
+    console.log(!vcData, isFaceVerified, state.name, isCardValid, !photoPath);
     if (vcData && !vcPhotoPath) {
       setVCPhoto();
     }
@@ -58,7 +59,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     }
     if (!vcData && !isReadyToCapture && !photoPath && state.name === 'Idle') {
       setOnBack(() => () => {
-        restartProcess(false);
+        restartProcess();
       });
       setIsBackEnabled(false);
     } else if (vcData && isReadyToCapture && !photoPath) {
@@ -76,15 +77,33 @@ const MainScreen: React.FC<MainScreenProps> = props => {
         setIsReadyToCapture(true);
       });
       setIsBackEnabled(true);
-    } else if (vcPhotoPath || beneficiaryVCPhotoPath) {
+    } else if (
+      state.name === 'Advertising' &&
+      vcData &&
+      isFaceVerified === 'successful'
+    ) {
       setOnBack(() => () => {
-        restartProcess(false);
+        restartBeneficiaryProcess();
       });
       setIsBackEnabled(true);
-    } else if (state.name === 'Advertising') {
+    } else if (
+      state.name === 'Advertising' &&
+      isFaceVerified === 'unverified'
+    ) {
       setOnBack(() => () => {
-        restartProcess(false);
+        restartProcess();
       });
+      setIsBackEnabled(true);
+    } else if (vcData && !isReadyToCapture && isFaceVerified) {
+      if (beneficiaryVCData) {
+        setOnBack(() => () => {
+          restartBeneficiaryProcess();
+        });
+      } else {
+        setOnBack(() => () => {
+          restartProcess();
+        });
+      }
       setIsBackEnabled(true);
     } else if (vcData && !isReadyToCapture && !photoPath) {
       setOnBack(() => () => {
@@ -94,10 +113,11 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     } else if (
       vcData &&
       isFaceVerified === 'successful' &&
-      isCardValid === 'unverified'
+      isCardValid === 'unverified' &&
+      state.name != 'Advertising'
     ) {
       setOnBack(() => () => {
-        restartProcess();
+        restartBeneficiaryProcess();
       });
       setIsBackEnabled(true);
     }
@@ -120,8 +140,25 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     beneficiaryVCData,
     state,
   ]);
-
-  const restartProcess = (startAdvertising = true) => {
+  const restartBeneficiaryProcess = (startAdvertising = false) => {
+    props.ovpble.stopTransfer();
+    setIsReadyToCapture(false);
+    props.setBeneficiaryVCData(null);
+    // Delete the file if it exists
+    RNFS.unlink(beneficiaryVCPhotoPath)
+      .then(() => {
+        console.log('File deleted');
+      })
+      .catch(err => {
+        console.log('Error deleting file:', err.message);
+      });
+    setBeneficiaryVCPhotoPath('');
+    if (startAdvertising) {
+      props.startBeneficiaryIDTransfer();
+    }
+    setIsCardValid('unverified');
+  };
+  const restartProcess = (startAdvertising = false) => {
     props.setVCData(null);
     props.ovpble.stopTransfer();
     setPhotoPath('');
@@ -209,9 +246,10 @@ const MainScreen: React.FC<MainScreenProps> = props => {
 
   const renderContent = () => {
     if (
-      !vcData &&
+      // !vcData &&
       !isReadyToCapture &&
       !photoPath &&
+      // !isCardValid &&
       (state.name === 'Idle' || state.name === 'Received')
     ) {
       return (
@@ -219,14 +257,20 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           beneficiaryVCData={beneficiaryVCData}
           beneficiaryVCPhotoPath={beneficiaryVCPhotoPath}
           setIsCardValid={setIsCardValid}
-          isIdVerified={false}
+          isIdVerified={isFaceVerified === 'successful'}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
-          onCapturePhoto={() => {
-            null;
-          }}
+          onCapturePhoto={
+            isFaceVerified === 'successful'
+              ? () => {}
+              : () => setIsReadyToCapture(true)
+          }
           onNationalIDClick={props.startNationalIDTransfer}
-          onBeneficiaryIDClick={props.startBeneficiaryIDTransfer}
+          onBeneficiaryIDClick={
+            isFaceVerified === 'successful'
+              ? props.startBeneficiaryIDTransfer
+              : () => {}
+          }
         />
       );
     } else if (state.name === 'Advertising') {
@@ -236,7 +280,13 @@ const MainScreen: React.FC<MainScreenProps> = props => {
       state.name === 'Connected'
     ) {
       return (
-        <WaitingScreen onDisconnect={restartProcess} onBack={restartProcess} />
+        <WaitingScreen
+          onDisconnect={
+            isFaceVerified === 'successful'
+              ? () => restartBeneficiaryProcess(true)
+              : () => restartProcess(true)
+          }
+        />
       );
     } else if (vcData && !isReadyToCapture && !photoPath) {
       return (
@@ -244,7 +294,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           beneficiaryVCData={beneficiaryVCData}
           beneficiaryVCPhotoPath={beneficiaryVCPhotoPath}
           setIsCardValid={setIsCardValid}
-          isIdVerified={false}
+          isIdVerified={isFaceVerified === 'successful'}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
           onCapturePhoto={() => setIsReadyToCapture(true)}
@@ -291,7 +341,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           beneficiaryVCData={beneficiaryVCData}
           beneficiaryVCPhotoPath={beneficiaryVCPhotoPath}
           setIsCardValid={setIsCardValid}
-          isIdVerified={true}
+          isIdVerified={isFaceVerified === 'successful'}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
           onCapturePhoto={() => setIsReadyToCapture(true)}
@@ -311,7 +361,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
             setIsReadyToCapture(true);
           }}
           onBack={() => {
-            restartProcess(false);
+            restartProcess();
           }}
           onSubmitWithoutVerification={props.returnVC}
         />
@@ -322,7 +372,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           onSubmit={props.returnVC}
           openedByIntent={props.openedByIntent}
           onBack={() => {
-            restartProcess(false);
+            restartProcess();
           }}
         />
       );
@@ -337,7 +387,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
             props.setBeneficiaryVCData(null);
           }}
           onBack={() => {
-            restartProcess(false);
+            restartProcess();
           }}
           onSubmitWithoutVerification={props.returnVC}
         />

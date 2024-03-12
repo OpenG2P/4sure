@@ -106,6 +106,7 @@ export default function App() {
           setResult(JSON.parse(vc));
         } else {
           Toast.show('Invalid ID received!', Toast.SHORT);
+          setIsBackEnabled(false);
         }
       })
       .catch(err => {

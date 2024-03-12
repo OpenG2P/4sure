@@ -10,13 +10,9 @@ import {
 
 interface WaitingScreenProps {
   onDisconnect: () => void;
-  onBack: () => void;
 }
 
-export const WaitingScreen: React.FC<WaitingScreenProps> = ({
-  onDisconnect,
-  onBack,
-}) => {
+export const WaitingScreen: React.FC<WaitingScreenProps> = ({onDisconnect}) => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={theme.headingText}>
