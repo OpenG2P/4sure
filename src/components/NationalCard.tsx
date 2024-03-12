@@ -103,9 +103,9 @@ const styles = StyleSheet.create({
     marginRight: 0,
     borderColor: 'green',
     padding: 1,
-    paddingLeft: 6,
+    textAlign: 'center',
     paddingTop: 4,
-    width: 92,
+    width: 100,
   },
   buttonStyle: {
     fontSize: 10,

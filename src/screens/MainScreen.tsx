@@ -132,7 +132,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
         console.log('File deleted');
       })
       .catch(err => {
-        console.error('Error deleting file:', err.message);
+        console.log('Error deleting file:', err.message);
       });
     setVcPhotoPath('');
     props.setBeneficiaryVCData(null);
@@ -142,7 +142,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
         console.log('File deleted');
       })
       .catch(err => {
-        console.error('Error deleting file:', err.message);
+        console.log('Error deleting file:', err.message);
       });
     setBeneficiaryVCPhotoPath('');
     props.setIsFaceVerified('unverified');

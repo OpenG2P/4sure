@@ -12,9 +12,9 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
-    "@iriscan/biometric-sdk-react-native": ^0.2.8
-    "@mosip/ble-verifier-sdk": ^0.1.1
-    "@mosip/tuvali": ^0.4.9
+    "@iriscan/biometric-sdk-react-native": 0.2.8
+    "@mosip/ble-verifier-sdk": 0.1.1
+    "@mosip/tuvali": 0.4.9
     "@react-native/babel-preset": 0.73.20
     "@react-native/eslint-config": 0.73.2
     "@react-native/metro-config": 0.73.4
@@ -29,13 +29,14 @@ __metadata:
     prettier: 2.8.8
     react: 18.2.0
     react-native: 0.73.3
+    react-native-camera-kit: ^13.0.0
     react-native-fs: ^2.20.0
     react-native-permissions: ^4.1.1
     react-native-qrcode-svg: ^6.3.0
+    react-native-simple-toast: ^3.3.0
     react-native-splash-screen: ^3.3.0
     react-native-svg: ^14.1.0
     react-native-vector-icons: ^10.0.3
-    react-native-vision-camera: ^3.8.2
     react-test-renderer: 18.2.0
     typescript: 5.0.4
   languageName: unknown
@@ -1756,7 +1757,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iriscan/biometric-sdk-react-native@npm:^0.2.8":
+"@iriscan/biometric-sdk-react-native@npm:0.2.8":
   version: 0.2.8
   resolution: "@iriscan/biometric-sdk-react-native@npm:0.2.8"
   peerDependencies:
@@ -2111,7 +2112,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mosip/ble-verifier-sdk@npm:^0.1.1":
+"@mosip/ble-verifier-sdk@npm:0.1.1":
   version: 0.1.1
   resolution: "@mosip/ble-verifier-sdk@npm:0.1.1"
   dependencies:
@@ -2123,7 +2124,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mosip/tuvali@npm:^0.4.9":
+"@mosip/tuvali@npm:0.4.9, @mosip/tuvali@npm:^0.4.9":
   version: 0.4.9
   resolution: "@mosip/tuvali@npm:0.4.9"
   peerDependencies:
@@ -6740,7 +6741,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.21":
+"lodash@npm:^4.14.2, lodash@npm:^4.17.21":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
@@ -8045,6 +8046,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-camera-kit@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "react-native-camera-kit@npm:13.0.0"
+  dependencies:
+    lodash: ^4.14.2
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 5d795bf46935012d501d421c414cac24afd6ce4bd753ad4aedd621bbf5034650bfd6285bea0ae32e62d49316a5a8976b73676bcaefea7496abd3141f7337f382
+  languageName: node
+  linkType: hard
+
 "react-native-fs@npm:^2.20.0":
   version: 2.20.0
   resolution: "react-native-fs@npm:2.20.0"
@@ -8089,6 +8102,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-simple-toast@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "react-native-simple-toast@npm:3.3.0"
+  peerDependencies:
+    react: "*"
+    react-native: ">=0.71.0"
+  checksum: 172bc130a3854a494c2fb840545e6a382a07a994e714289ed9d2d2eedc0d5e5f9c470619e7e778f1968e08d4a2d6d7addc7eb7405ad1712455f036bcc04ee4b4
+  languageName: node
+  linkType: hard
+
 "react-native-splash-screen@npm:^3.3.0":
   version: 3.3.0
   resolution: "react-native-splash-screen@npm:3.3.0"
@@ -8123,20 +8146,6 @@ __metadata:
     fa6-upgrade: bin/fa6-upgrade.sh
     generate-icon: bin/generate-icon.js
   checksum: 77f22804b0217b4b21e8f4baaee6d33d09429bf55a31e07347fb5ab0af395b0d9adc0cbc3abd46f689ccaf07b953dc909eba95213bce7e03b562801fe4fd0768
-  languageName: node
-  linkType: hard
-
-"react-native-vision-camera@npm:^3.8.2":
-  version: 3.9.0
-  resolution: "react-native-vision-camera@npm:3.9.0"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-    react-native-worklets-core: "*"
-  peerDependenciesMeta:
-    react-native-worklets-core:
-      optional: true
-  checksum: 52cca29ed7b8d8fcc4ae8f5e8da71844d0a96dfa642833fbda611469dac9a2a9fbcace2d9c2a09ab735d1d91582815a05bd3b466889afbcc2bd1deae2112969b
   languageName: node
   linkType: hard
 
