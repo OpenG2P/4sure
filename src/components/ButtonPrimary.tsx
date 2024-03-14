@@ -3,6 +3,7 @@ import theme from '@/utils/theme';
 
 // Create a button with round shape
 export function ButtonPrimary(props: {
+  buttonTextStyle?: any;
   style: any;
   title: string;
   onPress: () => void;
@@ -12,7 +13,9 @@ export function ButtonPrimary(props: {
       style={[styles.button, props.style]}
       onPress={props.onPress}
       activeOpacity={0.7}>
-      <Text style={styles.buttonText}>{props.title}</Text>
+      <Text style={[styles.buttonText, props?.buttonTextStyle]}>
+        {props.title}
+      </Text>
     </TouchableOpacity>
   );
 }

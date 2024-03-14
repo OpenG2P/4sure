@@ -37,6 +37,9 @@ const MainScreen: React.FC<MainScreenProps> = props => {
   const [vcPhotoPath, setVcPhotoPath] = useState('');
   const [beneficiaryVCPhotoPath, setBeneficiaryVCPhotoPath] = useState('');
   const [isCardValid, setIsCardValid] = useState('unverified');
+  const [isPopupVisible, setPopupIsVisible] = useState(false);
+  const [onConfirmFunc, setOnConfirmFunc] = useState(() => () => {});
+  const [popupType, setPopupType] = React.useState('default');
 
   const {
     state,
@@ -50,7 +53,14 @@ const MainScreen: React.FC<MainScreenProps> = props => {
   } = props;
 
   useEffect(() => {
-    console.log(!vcData, isFaceVerified, state.name, isCardValid, !photoPath);
+    console.log(
+      !vcData,
+      isFaceVerified,
+      state.name,
+      isCardValid,
+      !photoPath,
+      isPopupVisible,
+    );
     if (vcData && !vcPhotoPath) {
       setVCPhoto();
     }
@@ -100,8 +110,13 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           restartBeneficiaryProcess();
         });
       } else {
+        setPopupType('default');
         setOnBack(() => () => {
-          restartProcess();
+          setPopupIsVisible(true);
+          setOnConfirmFunc(() => () => {
+            restartProcess();
+            setPopupIsVisible(false);
+          });
         });
       }
       setIsBackEnabled(true);
@@ -260,6 +275,11 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           isIdVerified={isFaceVerified === 'successful'}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
+          isPopupVisible={isPopupVisible}
+          setPopupIsVisible={setPopupIsVisible}
+          onPress={onConfirmFunc}
+          popupType={popupType}
+          setPopupType={setPopupType}
           onCapturePhoto={
             isFaceVerified === 'successful'
               ? () => {}
@@ -297,6 +317,11 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           isIdVerified={isFaceVerified === 'successful'}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
+          isPopupVisible={isPopupVisible}
+          setPopupIsVisible={setPopupIsVisible}
+          onPress={onConfirmFunc}
+          popupType={popupType}
+          setPopupType={setPopupType}
           onCapturePhoto={() => setIsReadyToCapture(true)}
           onNationalIDClick={() => {
             null;
@@ -344,6 +369,11 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           isIdVerified={isFaceVerified === 'successful'}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
+          isPopupVisible={isPopupVisible}
+          setPopupIsVisible={setPopupIsVisible}
+          onPress={onConfirmFunc}
+          popupType={popupType}
+          setPopupType={setPopupType}
           onCapturePhoto={() => setIsReadyToCapture(true)}
           onNationalIDClick={() => {
             null;

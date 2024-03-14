@@ -6,7 +6,6 @@ import {
   View,
   NativeModules,
   Image,
-  // Linking,
 } from 'react-native';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import {configure, faceCompare} from '@iriscan/biometric-sdk-react-native';

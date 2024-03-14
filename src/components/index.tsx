@@ -8,3 +8,4 @@ export * from './BeneficiaryCard';
 export * from './BackButton';
 export * from './LinkedText';
 export * from './CornerBorders';
+export * from './PopupBox';
