@@ -53,130 +53,87 @@ const MainScreen: React.FC<MainScreenProps> = props => {
   } = props;
 
   useEffect(() => {
-    console.log(
-      !vcData,
-      isFaceVerified,
-      state.name,
-      isCardValid,
-      !photoPath,
-      isPopupVisible,
-    );
     if (vcData && !vcPhotoPath) {
       setVCPhoto();
     }
     if (beneficiaryVCData && !beneficiaryVCPhotoPath) {
       setBeneficiaryVCPhoto();
     }
+  }, [vcData, vcPhotoPath, beneficiaryVCData, beneficiaryVCPhotoPath]);
+
+  useEffect(() => {
+    // Default settings
+    let newOnBack = () => () => {};
+    let newIsBackEnabled = true;
+    let newPopupType = 'default';
+
     if (!vcData && !isReadyToCapture && !photoPath && state.name === 'Idle') {
-      setOnBack(() => () => {
-        restartProcess();
-      });
-      setIsBackEnabled(false);
+      newOnBack = () => () => restartProcess();
+      newIsBackEnabled = false;
     } else if (vcData && isReadyToCapture && !photoPath) {
-      setOnBack(() => () => {
+      newOnBack = () => () => {
         setVCData(null);
         setIsReadyToCapture(false);
         setPhotoPath('');
-      });
-      setIsBackEnabled(true);
+      };
     } else if (vcData && photoPath && isFaceVerified === 'unverified') {
-      setOnBack(() => () => {
+      newOnBack = () => () => {
         setPhotoPath('');
         props.setCapturedPhoto(null);
         props.setIsFaceVerified('unverified');
         setIsReadyToCapture(true);
-      });
-      setIsBackEnabled(true);
-    } else if (
-      state.name === 'Advertising' &&
-      vcData &&
-      isFaceVerified === 'successful'
-    ) {
-      setOnBack(() => () => {
-        restartBeneficiaryProcess();
-      });
-      setIsBackEnabled(true);
-    } else if (
-      state.name === 'Advertising' &&
-      isFaceVerified === 'unverified'
-    ) {
-      setOnBack(() => () => {
-        restartProcess();
-      });
-      setIsBackEnabled(true);
+      };
+    } else if (state.name === 'Advertising') {
+      if (isFaceVerified === 'successful') {
+        newOnBack = () => () => restartBeneficiaryProcess();
+      } else if (isFaceVerified === 'unverified') {
+        newOnBack = () => () => restartProcess();
+      }
     } else if (
       vcData &&
       !isReadyToCapture &&
-      isFaceVerified &&
-      !beneficiaryVCData
+      ((isFaceVerified && !beneficiaryVCData) || !photoPath)
     ) {
-      setPopupType('default');
-      setOnBack(() => () => {
+      newOnBack = () => () => {
         setPopupIsVisible(true);
         setOnConfirmFunc(() => () => {
           restartProcess();
           setPopupIsVisible(false);
         });
-      });
+      };
+    } else if (
+      vcData &&
+      isFaceVerified === 'successful' &&
+      isCardValid === 'unverified' &&
+      state.name !== 'Advertising'
+    ) {
+      newPopupType = vcData && !beneficiaryVCData ? 'type_a' : 'default';
+      newOnBack = () => () => {
+        setPopupIsVisible(true);
+        setOnConfirmFunc(() => () => {
+          (vcData && !beneficiaryVCData
+            ? restartProcess
+            : restartBeneficiaryProcess)();
+          setPopupIsVisible(false);
+        });
+      };
+    } else if (isFaceVerified === 'failed' || isCardValid !== 'unverified') {
+      newIsBackEnabled = false;
+    }
 
-      setIsBackEnabled(true);
-    } else if (vcData && !isReadyToCapture && !photoPath) {
-      setOnBack(() => () => {
-        restartProcess();
-      });
-      setIsBackEnabled(true);
-    } else if (
-      vcData &&
-      !beneficiaryVCData &&
-      isFaceVerified === 'successful' &&
-      isCardValid === 'unverified' &&
-      state.name != 'Advertising'
-    ) {
-      setPopupType('type_a');
-      setOnBack(() => () => {
-        setPopupIsVisible(true);
-        setOnConfirmFunc(() => () => {
-          restartProcess();
-          setPopupIsVisible(false);
-        });
-      });
-      setIsBackEnabled(true);
-    } else if (
-      vcData &&
-      beneficiaryVCData &&
-      isFaceVerified === 'successful' &&
-      isCardValid === 'unverified' &&
-      state.name != 'Advertising'
-    ) {
-      setPopupType('default');
-      setOnBack(() => () => {
-        setPopupIsVisible(true);
-        setOnConfirmFunc(() => () => {
-          restartBeneficiaryProcess();
-          setPopupIsVisible(false);
-        });
-      });
-      setIsBackEnabled(true);
-    }
-    if (vcData && isFaceVerified === 'failed') {
-      setIsBackEnabled(false);
-    }
-    if (isCardValid === 'valid') {
-      setIsBackEnabled(false);
-    } else if (isCardValid === 'invalid') {
-      setIsBackEnabled(false);
-    }
+    setOnBack(newOnBack);
+    setIsBackEnabled(newIsBackEnabled);
+    setPopupType(newPopupType);
   }, [
-    vcPhotoPath,
-    beneficiaryVCPhotoPath,
     vcData,
     isReadyToCapture,
     photoPath,
     isFaceVerified,
     isCardValid,
     beneficiaryVCData,
-    state,
+    state.name,
   ]);
+
   const restartBeneficiaryProcess = (startAdvertising = false) => {
     props.ovpble.stopTransfer();
     setIsReadyToCapture(false);
@@ -195,6 +152,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     }
     setIsCardValid('unverified');
   };
+
   const restartProcess = (startAdvertising = false) => {
     props.setVCData(null);
     props.ovpble.stopTransfer();
@@ -445,26 +403,6 @@ const MainScreen: React.FC<MainScreenProps> = props => {
         />
       );
     }
-    // Enable this for debugging
-    // return (
-    //   <SafeAreaView style={{backgroundColor: 'white'}}>
-    //     <Text style={{color: 'black', backgroundColor: 'white'}}>
-    //       Debugging Information:
-    //       {'\n'}
-    //       nationalIDData: {JSON.stringify(vcData)}
-    //       {'\n'}
-    //       isReadyToCapture: {isReadyToCapture.toString()}
-    //       {'\n'}
-    //       photoPath: {photoPath}
-    //       {'\n'}
-    //       isFaceVerified: {isFaceVerified}
-    //       {'\n'}
-    //       isCardValid: {isCardValid}
-    //       {'\n'}
-    //       state: {JSON.stringify(state)}
-    //     </Text>
-    //   </SafeAreaView>
-    // );
   };
 
   return <SafeAreaView>{renderContent()}</SafeAreaView>;
