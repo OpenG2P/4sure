@@ -28,9 +28,7 @@ export default function App() {
   const [openedByIntent, setOpenedByIntent] = useState(false);
 
   const [isBackEnabled, setIsBackEnabled] = useState(false);
-  const [onBack, setOnBack] = useState<(enabled: boolean) => void>(
-    () => () => {},
-  );
+  const [onBack, setOnBack] = useState<() => void>(() => () => {});
 
   useEffect(() => {
     SplashScreen.hide();
@@ -222,7 +220,7 @@ export default function App() {
             // position: 'absolute',
           }}
           source={require('../assets/images/back.png')}
-          onPress={() => onBack(true)}
+          onPress={onBack}
         />
       )}
       <Image

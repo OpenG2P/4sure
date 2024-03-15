@@ -115,6 +115,8 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
             onPress={onPress}
             isPopupVisible={isPopupVisible}
             setPopupIsVisible={setPopupIsVisible}
+            setPopupType={setPopupType}
+            popupType={popupType}
           />
         ) : (
           <PopupBox
@@ -124,6 +126,7 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
             isPopupVisible={isPopupVisible}
             setPopupIsVisible={setPopupIsVisible}
             setPopupType={setPopupType}
+            popupType={popupType}
           />
         )}
       </View>

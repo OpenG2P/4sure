@@ -104,21 +104,21 @@ const MainScreen: React.FC<MainScreenProps> = props => {
         restartProcess();
       });
       setIsBackEnabled(true);
-    } else if (vcData && !isReadyToCapture && isFaceVerified) {
-      if (beneficiaryVCData) {
-        setOnBack(() => () => {
-          restartBeneficiaryProcess();
+    } else if (
+      vcData &&
+      !isReadyToCapture &&
+      isFaceVerified &&
+      !beneficiaryVCData
+    ) {
+      setPopupType('default');
+      setOnBack(() => () => {
+        setPopupIsVisible(true);
+        setOnConfirmFunc(() => () => {
+          restartProcess();
+          setPopupIsVisible(false);
         });
-      } else {
-        setPopupType('default');
-        setOnBack(() => () => {
-          setPopupIsVisible(true);
-          setOnConfirmFunc(() => () => {
-            restartProcess();
-            setPopupIsVisible(false);
-          });
-        });
-      }
+      });
+
       setIsBackEnabled(true);
     } else if (vcData && !isReadyToCapture && !photoPath) {
       setOnBack(() => () => {
@@ -127,12 +127,34 @@ const MainScreen: React.FC<MainScreenProps> = props => {
       setIsBackEnabled(true);
     } else if (
       vcData &&
+      !beneficiaryVCData &&
       isFaceVerified === 'successful' &&
       isCardValid === 'unverified' &&
       state.name != 'Advertising'
     ) {
+      setPopupType('type_a');
       setOnBack(() => () => {
-        restartBeneficiaryProcess();
+        setPopupIsVisible(true);
+        setOnConfirmFunc(() => () => {
+          restartProcess();
+          setPopupIsVisible(false);
+        });
+      });
+      setIsBackEnabled(true);
+    } else if (
+      vcData &&
+      beneficiaryVCData &&
+      isFaceVerified === 'successful' &&
+      isCardValid === 'unverified' &&
+      state.name != 'Advertising'
+    ) {
+      setPopupType('default');
+      setOnBack(() => () => {
+        setPopupIsVisible(true);
+        setOnConfirmFunc(() => () => {
+          restartBeneficiaryProcess();
+          setPopupIsVisible(false);
+        });
       });
       setIsBackEnabled(true);
     }

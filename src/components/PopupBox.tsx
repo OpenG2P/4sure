@@ -7,6 +7,7 @@ export function PopupBox(props: {
   title: string;
   description: string;
   onPress: () => void;
+  popupType: string;
   isPopupVisible: boolean;
   setPopupIsVisible: (isVisible: boolean) => void;
   setPopupType?: (type: string) => void;
@@ -30,7 +31,7 @@ export function PopupBox(props: {
                 title="CANCEL"
                 onPress={() => {
                   props.setPopupIsVisible(false);
-                  props.setPopupType && props.setPopupType('default');
+                  props.setPopupType && props.setPopupType(props.popupType);
                 }}
                 style={{
                   width: 120,
@@ -41,7 +42,7 @@ export function PopupBox(props: {
                 buttonTextStyle={{fontSize: 16}}
               />
               <ButtonPrimary
-                title="YES"
+                title={props.popupType === 'default' ? 'BACK' : 'YES'}
                 onPress={props.onPress}
                 style={{
                   width: 120,
