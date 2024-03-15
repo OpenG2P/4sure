@@ -16,6 +16,8 @@ interface VCDetailsScreenProps {
   isIdVerified: boolean;
   isPopupVisible: boolean;
   popupType: string;
+  beneficiairyIDError: string;
+  nationalIDerror: string;
   onNationalIDClick: () => void;
   onBeneficiaryIDClick: () => void;
   onCapturePhoto: () => void;
@@ -40,6 +42,8 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
   onPress,
   popupType,
   setPopupType,
+  beneficiairyIDError,
+  nationalIDerror,
 }) => {
   let generatedOn = '';
   let fullName = [];
@@ -81,6 +85,7 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
           generatedOn={generatedOn}
           onCapturePhoto={onCapturePhoto}
           onPress={onNationalIDClick}
+          cardError={nationalIDerror}
         />
         <BeneficiaryCard
           source={{uri: 'file://' + beneficiaryVCPhotoPath}}
@@ -100,6 +105,7 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
           idType={'Beneficiary Card'}
           generatedOn={beneficiaryVCData?.generatedOn}
           onPress={onBeneficiaryIDClick}
+          cardError={beneficiairyIDError}
         />
         {isIdVerified && beneficiaryVCPhotoPath && (
           <ButtonPrimary

@@ -18,7 +18,7 @@ interface MainScreenProps {
   setIsFaceVerified: any;
   returnVC: any;
   isFaceVerified: string;
-  state: any; // Adjust the type according to your state management
+  state: any;
   startNationalIDTransfer: any;
   startBeneficiaryIDTransfer: any;
   vcData: any;
@@ -29,6 +29,10 @@ interface MainScreenProps {
   openedByIntent: any;
   setIsBackEnabled: any;
   setOnBack: any;
+  beneficiairyIDError: any;
+  nationalIDerror: any;
+  setError: any;
+  setBeneficiaryError: any;
 }
 
 const MainScreen: React.FC<MainScreenProps> = props => {
@@ -50,6 +54,8 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     setIsBackEnabled,
     setOnBack,
     setVCData,
+    setError,
+    setBeneficiaryError,
   } = props;
 
   useEffect(() => {
@@ -95,6 +101,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
       ((isFaceVerified && !beneficiaryVCData) || !photoPath)
     ) {
       newOnBack = () => () => {
+        setError('');
         setPopupIsVisible(true);
         setOnConfirmFunc(() => () => {
           restartProcess();
@@ -109,6 +116,8 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     ) {
       newPopupType = vcData && !beneficiaryVCData ? 'type_a' : 'default';
       newOnBack = () => () => {
+        setError('');
+        setBeneficiaryError('');
         setPopupIsVisible(true);
         setOnConfirmFunc(() => () => {
           (vcData && !beneficiaryVCData
@@ -271,6 +280,8 @@ const MainScreen: React.FC<MainScreenProps> = props => {
               ? props.startBeneficiaryIDTransfer
               : () => {}
           }
+          beneficiairyIDError={props.beneficiairyIDError}
+          nationalIDerror={props.nationalIDerror}
         />
       );
     } else if (state.name === 'Advertising') {
@@ -309,6 +320,8 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           onBeneficiaryIDClick={() => {
             null;
           }}
+          beneficiairyIDError={props.beneficiairyIDError}
+          nationalIDerror={props.nationalIDerror}
         />
       );
     } else if (vcData && isReadyToCapture && !photoPath) {
@@ -359,6 +372,8 @@ const MainScreen: React.FC<MainScreenProps> = props => {
             null;
           }}
           onBeneficiaryIDClick={props.startBeneficiaryIDTransfer}
+          beneficiairyIDError={props.beneficiairyIDError}
+          nationalIDerror={props.nationalIDerror}
         />
       );
     } else if (vcData && isFaceVerified === 'failed') {

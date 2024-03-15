@@ -100,9 +100,10 @@ export default function App() {
             'MOSIPVerifiableCredential',
           )
         ) {
+          setError('');
           setResult(JSON.parse(vc));
         } else {
-          Toast.show('Invalid ID received!', Toast.SHORT);
+          setError('Choose only National ID!');
           setIsBackEnabled(false);
         }
       })
@@ -115,7 +116,7 @@ export default function App() {
     setBeneficiaryVC('');
     setBeneficiaryError(null);
     if (!result) {
-      Toast.show('Please add the National ID first', Toast.SHORT);
+      Toast.show('Please add the National ID first', Toast.LONG);
       return;
     }
     ovpble
@@ -129,8 +130,9 @@ export default function App() {
             'MOSIPVerifiableCredential',
           )
         ) {
-          Toast.show('Invalid ID received!', Toast.SHORT);
+          setBeneficiaryError('Choose only Beneficiary ID!');
         } else {
+          setBeneficiaryError('');
           setBeneficiaryVC(JSON.parse(vc));
         }
       })
@@ -251,6 +253,10 @@ export default function App() {
         openedByIntent={openedByIntent}
         setIsBackEnabled={setIsBackEnabled}
         setOnBack={setOnBack}
+        beneficiairyIDError={beneficiaryError}
+        nationalIDerror={error}
+        setError={setError}
+        setBeneficiaryError={setBeneficiaryError}
       />
     </View>
   );

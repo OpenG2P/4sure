@@ -13,6 +13,7 @@ export function NationalCard(props: {
   generatedOn: string;
   isVerified: string;
   isPhotoIDVerified: boolean;
+  cardError: string;
   onPress: () => void;
   onCapturePhoto: () => void;
 }) {
@@ -87,7 +88,17 @@ export function NationalCard(props: {
           </View>
         </TouchableOpacity>
         <View style={styles.bottomLineEmpty} />
-        <View style={styles.bottomRectangle} />
+        {!props.cardError ? (
+          <View style={styles.bottomRectangle} />
+        ) : (
+          <View style={styles.bottomRow}>
+            <Image
+              source={require('../../assets/images/warning.png')}
+              style={styles.warningImage}
+            />
+            <Text style={styles.warning}>Choose only National id</Text>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -252,5 +263,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 12,
     width: 110,
     borderBottomColor: theme.colors.lineColor,
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginRight: 12,
+  },
+  warning: {
+    fontSize: 14,
+    color: '#FF475A',
+    marginBottom: 0,
+  },
+  warningImage: {
+    width: 20,
+    height: 20,
+    right: 0,
+    top: 0,
   },
 });
