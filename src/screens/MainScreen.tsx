@@ -45,6 +45,18 @@ const MainScreen: React.FC<MainScreenProps> = props => {
   const [onConfirmFunc, setOnConfirmFunc] = useState(() => () => {});
   const [popupType, setPopupType] = React.useState('default');
 
+  const hyperLinkTextPress = () => {
+    setPopupType('type_a');
+    setPopupIsVisible(true);
+    setError('');
+    setBeneficiaryError('');
+    setPopupIsVisible(true);
+    setOnConfirmFunc(() => () => {
+      restartProcess();
+      setPopupIsVisible(false);
+    });
+  };
+
   const {
     state,
     vcData,
@@ -105,6 +117,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     ) {
       newOnBack = () => () => {
         setError('');
+        setBeneficiaryError('');
         setPopupIsVisible(true);
         setOnConfirmFunc(() => () => {
           restartProcess();
@@ -280,6 +293,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           onBeneficiaryIDClick={props.startBeneficiaryIDTransfer}
           beneficiairyIDError={props.beneficiairyIDError}
           nationalIDerror={props.nationalIDerror}
+          onHyperLinkTextPress={hyperLinkTextPress}
         />
       );
     } else if (state.name === 'Advertising') {
@@ -320,6 +334,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           }}
           beneficiairyIDError={props.beneficiairyIDError}
           nationalIDerror={props.nationalIDerror}
+          onHyperLinkTextPress={hyperLinkTextPress}
         />
       );
     } else if (vcData && isReadyToCapture && !photoPath) {
@@ -372,6 +387,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           onBeneficiaryIDClick={props.startBeneficiaryIDTransfer}
           beneficiairyIDError={props.beneficiairyIDError}
           nationalIDerror={props.nationalIDerror}
+          onHyperLinkTextPress={hyperLinkTextPress}
         />
       );
     } else if (vcData && isFaceVerified === 'failed') {

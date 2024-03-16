@@ -18,6 +18,7 @@ interface VCDetailsScreenProps {
   popupType: string;
   beneficiairyIDError: string;
   nationalIDerror: string;
+  onHyperLinkTextPress: () => void;
   onNationalIDClick: () => void;
   onBeneficiaryIDClick: () => void;
   onCapturePhoto: () => void;
@@ -44,6 +45,7 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
   setPopupType,
   beneficiairyIDError,
   nationalIDerror,
+  onHyperLinkTextPress,
 }) => {
   let generatedOn = '';
   let fullName = [];
@@ -137,12 +139,7 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
         )}
       </View>
       {vcData && !beneficiaryVCData && isIdVerified && (
-        <Text
-          onPress={() => {
-            setPopupType('type_a');
-            setPopupIsVisible(true);
-          }}
-          style={styles.hyperlinkText}>
+        <Text onPress={onHyperLinkTextPress} style={styles.hyperlinkText}>
           Go back to Home
         </Text>
       )}
