@@ -108,13 +108,13 @@ export default function App() {
         }
       })
       .catch(err => {
-        setError(err);
+        setError(err + '');
       });
   };
 
   const startBeneficiaryIDTransfer = () => {
     setBeneficiaryVC('');
-    setBeneficiaryError(null);
+    setBeneficiaryError('');
     if (!result) {
       Toast.show('Please add the National ID first', Toast.LONG);
       return;
@@ -137,7 +137,7 @@ export default function App() {
         }
       })
       .catch(err => {
-        setBeneficiaryError(err);
+        setBeneficiaryError(''); // Workaround for the issue where the error is not being cleared
       });
   };
 

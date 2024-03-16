@@ -74,6 +74,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     let newPopupType = 'default';
 
     if (!vcData && !isReadyToCapture && !photoPath && state.name === 'Idle') {
+      setError('');
       newOnBack = () => () => restartProcess();
       newIsBackEnabled = false;
     } else if (vcData && isReadyToCapture && !photoPath) {
@@ -92,6 +93,8 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     } else if (state.name === 'Advertising') {
       if (isFaceVerified === 'successful') {
         newOnBack = () => () => restartBeneficiaryProcess();
+        console.log('Errrr');
+        setBeneficiaryError('');
       } else if (isFaceVerified === 'unverified') {
         newOnBack = () => () => restartProcess();
       }
@@ -129,7 +132,6 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     } else if (isFaceVerified === 'failed' || isCardValid !== 'unverified') {
       newIsBackEnabled = false;
     }
-
     setOnBack(newOnBack);
     setIsBackEnabled(newIsBackEnabled);
     setPopupType(newPopupType);
@@ -275,11 +277,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
               : () => setIsReadyToCapture(true)
           }
           onNationalIDClick={props.startNationalIDTransfer}
-          onBeneficiaryIDClick={
-            isFaceVerified === 'successful'
-              ? props.startBeneficiaryIDTransfer
-              : () => {}
-          }
+          onBeneficiaryIDClick={props.startBeneficiaryIDTransfer}
           beneficiairyIDError={props.beneficiairyIDError}
           nationalIDerror={props.nationalIDerror}
         />
