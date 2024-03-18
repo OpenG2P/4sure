@@ -1,5 +1,13 @@
 import React from 'react';
-import {Modal, StyleSheet, Text, View, SafeAreaView} from 'react-native';
+import {
+  Modal,
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import {ButtonPrimary} from './ButtonPrimary';
 import {ButtonTertiary} from './ButtonTertiary';
 
@@ -24,6 +32,17 @@ export function PopupBox(props: {
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => {
+                props.setPopupIsVisible(false);
+                props.setPopupType && props.setPopupType('default');
+              }}>
+              <Image
+                source={require('../../assets/images/close.png')}
+                style={styles.image}
+              />
+            </TouchableOpacity>
             <Text style={styles.modalText}>{props.title}</Text>
             <Text style={styles.modalDescription}>{props.description}</Text>
             <View style={styles.row}>
@@ -61,6 +80,17 @@ export function PopupBox(props: {
 }
 
 const styles = StyleSheet.create({
+  image: {
+    width: 20,
+    height: 20,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    padding: 10,
+    zIndex: 1,
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -70,7 +100,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   modalView: {
     margin: 20,
@@ -88,6 +118,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalText: {
+    top: 10,
     marginBottom: 15,
     fontWeight: '500',
     fontSize: 22,
@@ -95,6 +126,7 @@ const styles = StyleSheet.create({
     color: '#000000',
   },
   modalDescription: {
+    top: 10,
     marginBottom: 15,
     fontWeight: '300',
     fontSize: 18,
