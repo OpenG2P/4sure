@@ -95,6 +95,27 @@ const MainScreen: React.FC<MainScreenProps> = props => {
         setIsReadyToCapture(false);
         setPhotoPath('');
       };
+    } else if (
+      !vcData &&
+      !isReadyToCapture &&
+      !photoPath &&
+      state.name === 'SecureConnectionEstablished'
+    ) {
+      newOnBack = () => () => {
+        console.log('Back button pressed');
+        setPhotoPath('');
+        props.setCapturedPhoto(null);
+        props.setIsFaceVerified('unverified');
+        restartProcess();
+      };
+    } else if (
+      vcData &&
+      photoPath &&
+      state.name === 'SecureConnectionEstablished'
+    ) {
+      newOnBack = () => () => {
+        restartBeneficiaryProcess();
+      };
     } else if (vcData && photoPath && isFaceVerified === 'unverified') {
       newOnBack = () => () => {
         setPhotoPath('');
@@ -105,7 +126,6 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     } else if (state.name === 'Advertising') {
       if (isFaceVerified === 'successful') {
         newOnBack = () => () => restartBeneficiaryProcess();
-        console.log('Errrr');
         setBeneficiaryError('');
       } else if (isFaceVerified === 'unverified') {
         newOnBack = () => () => restartProcess();
@@ -306,8 +326,8 @@ const MainScreen: React.FC<MainScreenProps> = props => {
         <WaitingScreen
           onDisconnect={
             isFaceVerified === 'successful'
-              ? () => restartBeneficiaryProcess(true)
-              : () => restartProcess(true)
+              ? () => restartBeneficiaryProcess()
+              : () => restartProcess()
           }
         />
       );
