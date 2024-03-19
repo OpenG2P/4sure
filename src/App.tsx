@@ -119,6 +119,10 @@ export default function App() {
       Toast.show('Please add the National ID first', Toast.LONG);
       return;
     }
+    if (isFaceVerified != 'successful') {
+      Toast.show('Please authenticate the National ID', Toast.LONG);
+      return;
+    }
     ovpble
       .startTransfer()
       .then(vc => {
@@ -170,7 +174,7 @@ export default function App() {
   };
 
   const returnVC = () => {
-    if (!isFaceVerified) {
+    if (isFaceVerified === 'successful') {
       console.error('Face verification not successful or not yet performed.');
       return;
     }
