@@ -36,7 +36,7 @@ export function PopupBox(props: {
               style={styles.closeButton}
               onPress={() => {
                 props.setPopupIsVisible(false);
-                props.setPopupType && props.setPopupType('default');
+                props.setPopupType && props.setPopupType(props.popupType);
               }}>
               <Image
                 source={require('../../assets/images/close.png')}
