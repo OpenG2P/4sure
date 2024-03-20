@@ -174,7 +174,7 @@ export default function App() {
   };
 
   const returnVC = () => {
-    if (isFaceVerified === 'successful') {
+    if (isFaceVerified != 'successful') {
       console.error('Face verification not successful or not yet performed.');
       return;
     }
