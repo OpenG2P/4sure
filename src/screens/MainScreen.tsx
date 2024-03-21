@@ -135,8 +135,10 @@ const MainScreen: React.FC<MainScreenProps> = props => {
       !isReadyToCapture &&
       ((isFaceVerified && !beneficiaryVCData) || !photoPath)
     ) {
-      if (!beneficiaryVCData) {
+      if (!beneficiaryVCData && isFaceVerified === 'successful') {
         newPopupType = 'type_a';
+      } else {
+        newPopupType = 'default';
       }
       newOnBack = () => () => {
         setError('');
@@ -153,7 +155,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
       isCardValid === 'unverified' &&
       state.name !== 'Advertising'
     ) {
-      newPopupType = vcData && !beneficiaryVCData ? 'type_a' : 'default';
+      newPopupType = vcData && !beneficiaryVCData ? 'type_a' : 'type_b';
       newOnBack = () => () => {
         setError('');
         setBeneficiaryError('');

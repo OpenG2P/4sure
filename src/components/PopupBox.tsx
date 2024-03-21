@@ -61,7 +61,11 @@ export function PopupBox(props: {
                 buttonTextStyle={{fontSize: 16}}
               />
               <ButtonPrimary
-                title={props.popupType === 'default' ? 'BACK' : 'YES'}
+                title={
+                  props.popupType === 'default' || props.popupType === 'type_b'
+                    ? 'BACK'
+                    : 'YES'
+                }
                 onPress={props.onPress}
                 style={{
                   width: 120,

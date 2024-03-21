@@ -116,10 +116,14 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
             style={styles.buttonStyle}
           />
         )}
-        {popupType === 'default' ? (
+        {popupType === 'default' || popupType === 'type_b' ? (
           <PopupBox
             title="Are you sure?"
-            description="Clicking on back button will erase the data captured"
+            description={
+              popupType === 'default'
+                ? 'Clicking on back button will erase the data captured'
+                : 'Clicking on back button will erase the beneficiary data captured.'
+            }
             onPress={onPress}
             isPopupVisible={isPopupVisible}
             setPopupIsVisible={setPopupIsVisible}
