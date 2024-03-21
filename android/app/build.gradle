@@ -80,8 +80,8 @@ android {
         applicationId "org.openg2p.forsure"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
-        versionName "1.1.1"
+        versionCode 15
+        versionName "0.7.0"
     }
     signingConfigs {
         debug {
@@ -100,12 +100,11 @@ android {
             applicationVariants.all { variant ->
                 variant.outputs.each { output ->
                     def versionName = variant.versionName
-                    def versionCode = variant.versionCode
                     def architecture = output.getFilter(com.android.build.OutputFile.ABI)
                     def date = new Date()
                     def formattedDate = date.format('dd-MM-yyyy')
 
-                    output.outputFileName = "4Sure-debug-${versionName}-v${versionCode}-${formattedDate}-${architecture}.apk"
+                    output.outputFileName = "4Sure-debug-v${versionName}-${formattedDate}-${architecture}.apk"
                 }
             }
         }

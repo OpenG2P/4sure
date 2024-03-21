@@ -1,10 +1,10 @@
-import React, {useEffect} from 'react';
-import {View, Image, Text, SafeAreaView, StyleSheet} from 'react-native';
+import React from 'react';
+import {View, Text, SafeAreaView, StyleSheet} from 'react-native';
 import {
   NationalCard,
   BeneficiaryCard,
   ButtonPrimary,
-  BackButton,
+  PopupBox,
 } from '@/components';
 import theme from '@/utils/theme';
 
@@ -14,10 +14,18 @@ interface VCDetailsScreenProps {
   beneficiaryVCData: any;
   beneficiaryVCPhotoPath: string;
   isIdVerified: boolean;
+  isPopupVisible: boolean;
+  popupType: string;
+  beneficiairyIDError: string;
+  nationalIDerror: string;
+  onHyperLinkTextPress: () => void;
   onNationalIDClick: () => void;
   onBeneficiaryIDClick: () => void;
   onCapturePhoto: () => void;
   setIsCardValid: (state: string) => void;
+  setPopupIsVisible: (state: boolean) => void;
+  onPress: () => void;
+  setPopupType: (state: string) => void;
 }
 
 export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
@@ -30,6 +38,14 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
   onBeneficiaryIDClick,
   onCapturePhoto,
   setIsCardValid,
+  isPopupVisible,
+  setPopupIsVisible,
+  onPress,
+  popupType,
+  setPopupType,
+  beneficiairyIDError,
+  nationalIDerror,
+  onHyperLinkTextPress,
 }) => {
   let generatedOn = '';
   let fullName = [];
@@ -71,6 +87,7 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
           generatedOn={generatedOn}
           onCapturePhoto={onCapturePhoto}
           onPress={onNationalIDClick}
+          cardError={nationalIDerror}
         />
         <BeneficiaryCard
           source={{uri: 'file://' + beneficiaryVCPhotoPath}}
@@ -90,6 +107,7 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
           idType={'Beneficiary Card'}
           generatedOn={beneficiaryVCData?.generatedOn}
           onPress={onBeneficiaryIDClick}
+          cardError={beneficiairyIDError}
         />
         {isIdVerified && beneficiaryVCPhotoPath && (
           <ButtonPrimary
@@ -98,12 +116,49 @@ export const VCDetailsScreen: React.FC<VCDetailsScreenProps> = ({
             style={styles.buttonStyle}
           />
         )}
+        {popupType === 'default' || popupType === 'type_b' ? (
+          <PopupBox
+            title="Are you sure?"
+            description={
+              popupType === 'default'
+                ? 'Clicking on back button will erase the data captured'
+                : 'Clicking on back button will erase the beneficiary data captured.'
+            }
+            onPress={onPress}
+            isPopupVisible={isPopupVisible}
+            setPopupIsVisible={setPopupIsVisible}
+            setPopupType={setPopupType}
+            popupType={popupType}
+          />
+        ) : (
+          <PopupBox
+            title="Are you sure?"
+            description="Do you want to proceed back to home without Beneficiary validation?"
+            onPress={onPress}
+            isPopupVisible={isPopupVisible}
+            setPopupIsVisible={setPopupIsVisible}
+            setPopupType={setPopupType}
+            popupType={popupType}
+          />
+        )}
       </View>
+      {vcData && !beneficiaryVCData && isIdVerified && (
+        <Text onPress={onHyperLinkTextPress} style={styles.hyperlinkText}>
+          Go back to Home
+        </Text>
+      )}
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  hyperlinkText: {
+    textAlign: 'center',
+    color: 'blue',
+    textDecorationLine: 'underline',
+    fontSize: 18,
+    fontWeight: '500',
+  },
   container: {
     flex: 1,
     top: 10,

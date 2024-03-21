@@ -6,7 +6,6 @@ import {
   View,
   NativeModules,
   Image,
-  // Linking,
 } from 'react-native';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import {configure, faceCompare} from '@iriscan/biometric-sdk-react-native';
@@ -29,9 +28,7 @@ export default function App() {
   const [openedByIntent, setOpenedByIntent] = useState(false);
 
   const [isBackEnabled, setIsBackEnabled] = useState(false);
-  const [onBack, setOnBack] = useState<(enabled: boolean) => void>(
-    () => () => {},
-  );
+  const [onBack, setOnBack] = useState<() => void>(() => () => {});
 
   useEffect(() => {
     SplashScreen.hide();
@@ -81,7 +78,7 @@ export default function App() {
           },
         },
         matcher: {
-          threshold: 2.0,
+          threshold: 2.0, // Update threshold as per requirement
         },
       },
     };
@@ -103,21 +100,27 @@ export default function App() {
             'MOSIPVerifiableCredential',
           )
         ) {
+          setError('');
           setResult(JSON.parse(vc));
         } else {
-          Toast.show('Invalid ID received!', Toast.SHORT);
+          setError('Choose only National ID!');
+          setIsBackEnabled(false);
         }
       })
       .catch(err => {
-        setError(err);
+        setError(err + '');
       });
   };
 
   const startBeneficiaryIDTransfer = () => {
     setBeneficiaryVC('');
-    setBeneficiaryError(null);
+    setBeneficiaryError('');
     if (!result) {
-      Toast.show('Please add the National ID first', Toast.SHORT);
+      Toast.show('Please add the National ID first', Toast.LONG);
+      return;
+    }
+    if (isFaceVerified != 'successful') {
+      Toast.show('Please authenticate the National ID', Toast.LONG);
       return;
     }
     ovpble
@@ -131,13 +134,14 @@ export default function App() {
             'MOSIPVerifiableCredential',
           )
         ) {
-          Toast.show('Invalid ID received!', Toast.SHORT);
+          setBeneficiaryError('Choose only Beneficiary ID!');
         } else {
+          setBeneficiaryError('');
           setBeneficiaryVC(JSON.parse(vc));
         }
       })
       .catch(err => {
-        setBeneficiaryError(err);
+        setBeneficiaryError(''); // Workaround for the issue where the error is not being cleared
       });
   };
 
@@ -170,7 +174,7 @@ export default function App() {
   };
 
   const returnVC = () => {
-    if (!isFaceVerified) {
+    if (isFaceVerified != 'successful') {
       console.error('Face verification not successful or not yet performed.');
       return;
     }
@@ -222,7 +226,7 @@ export default function App() {
             // position: 'absolute',
           }}
           source={require('../assets/images/back.png')}
-          onPress={() => onBack(true)}
+          onPress={onBack}
         />
       )}
       <Image
@@ -253,6 +257,10 @@ export default function App() {
         openedByIntent={openedByIntent}
         setIsBackEnabled={setIsBackEnabled}
         setOnBack={setOnBack}
+        beneficiairyIDError={beneficiaryError}
+        nationalIDerror={error}
+        setError={setError}
+        setBeneficiaryError={setBeneficiaryError}
       />
     </View>
   );

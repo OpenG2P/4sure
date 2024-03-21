@@ -18,7 +18,7 @@ interface MainScreenProps {
   setIsFaceVerified: any;
   returnVC: any;
   isFaceVerified: string;
-  state: any; // Adjust the type according to your state management
+  state: any;
   startNationalIDTransfer: any;
   startBeneficiaryIDTransfer: any;
   vcData: any;
@@ -29,6 +29,10 @@ interface MainScreenProps {
   openedByIntent: any;
   setIsBackEnabled: any;
   setOnBack: any;
+  beneficiairyIDError: any;
+  nationalIDerror: any;
+  setError: any;
+  setBeneficiaryError: any;
 }
 
 const MainScreen: React.FC<MainScreenProps> = props => {
@@ -37,6 +41,21 @@ const MainScreen: React.FC<MainScreenProps> = props => {
   const [vcPhotoPath, setVcPhotoPath] = useState('');
   const [beneficiaryVCPhotoPath, setBeneficiaryVCPhotoPath] = useState('');
   const [isCardValid, setIsCardValid] = useState('unverified');
+  const [isPopupVisible, setPopupIsVisible] = useState(false);
+  const [onConfirmFunc, setOnConfirmFunc] = useState(() => () => {});
+  const [popupType, setPopupType] = React.useState('default');
+
+  const hyperLinkTextPress = () => {
+    setPopupType('type_a');
+    setPopupIsVisible(true);
+    setError('');
+    setBeneficiaryError('');
+    setPopupIsVisible(true);
+    setOnConfirmFunc(() => () => {
+      restartProcess();
+      setPopupIsVisible(false);
+    });
+  };
 
   const {
     state,
@@ -47,6 +66,8 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     setIsBackEnabled,
     setOnBack,
     setVCData,
+    setError,
+    setBeneficiaryError,
   } = props;
 
   useEffect(() => {
@@ -56,72 +77,132 @@ const MainScreen: React.FC<MainScreenProps> = props => {
     if (beneficiaryVCData && !beneficiaryVCPhotoPath) {
       setBeneficiaryVCPhoto();
     }
+  }, [vcData, vcPhotoPath, beneficiaryVCData, beneficiaryVCPhotoPath]);
+
+  useEffect(() => {
+    // Default settings
+    let newOnBack = () => () => {};
+    let newIsBackEnabled = true;
+    let newPopupType = 'default';
+
     if (!vcData && !isReadyToCapture && !photoPath && state.name === 'Idle') {
-      setOnBack(() => () => {
-        restartProcess(false);
-      });
-      setIsBackEnabled(false);
+      setError('');
+      newOnBack = () => () => restartProcess();
+      newIsBackEnabled = false;
     } else if (vcData && isReadyToCapture && !photoPath) {
-      setOnBack(() => () => {
+      newOnBack = () => () => {
         setVCData(null);
         setIsReadyToCapture(false);
         setPhotoPath('');
-      });
-      setIsBackEnabled(true);
+      };
+    } else if (
+      !vcData &&
+      !isReadyToCapture &&
+      !photoPath &&
+      state.name === 'SecureConnectionEstablished'
+    ) {
+      newOnBack = () => () => {
+        console.log('Back button pressed');
+        setPhotoPath('');
+        props.setCapturedPhoto(null);
+        props.setIsFaceVerified('unverified');
+        restartProcess();
+      };
+    } else if (
+      vcData &&
+      photoPath &&
+      state.name === 'SecureConnectionEstablished'
+    ) {
+      newOnBack = () => () => {
+        restartBeneficiaryProcess();
+      };
     } else if (vcData && photoPath && isFaceVerified === 'unverified') {
-      setOnBack(() => () => {
+      newOnBack = () => () => {
         setPhotoPath('');
         props.setCapturedPhoto(null);
         props.setIsFaceVerified('unverified');
         setIsReadyToCapture(true);
-      });
-      setIsBackEnabled(true);
-    } else if (vcPhotoPath || beneficiaryVCPhotoPath) {
-      setOnBack(() => () => {
-        restartProcess(false);
-      });
-      setIsBackEnabled(true);
+      };
     } else if (state.name === 'Advertising') {
-      setOnBack(() => () => {
-        restartProcess(false);
-      });
-      setIsBackEnabled(true);
-    } else if (vcData && !isReadyToCapture && !photoPath) {
-      setOnBack(() => () => {
-        restartProcess();
-      });
-      setIsBackEnabled(true);
+      if (isFaceVerified === 'successful') {
+        newOnBack = () => () => restartBeneficiaryProcess();
+        setBeneficiaryError('');
+      } else if (isFaceVerified === 'unverified') {
+        newOnBack = () => () => restartProcess();
+      }
+    } else if (
+      vcData &&
+      !isReadyToCapture &&
+      ((isFaceVerified && !beneficiaryVCData) || !photoPath)
+    ) {
+      if (!beneficiaryVCData && isFaceVerified === 'successful') {
+        newPopupType = 'type_a';
+      } else {
+        newPopupType = 'default';
+      }
+      newOnBack = () => () => {
+        setError('');
+        setBeneficiaryError('');
+        setPopupIsVisible(true);
+        setOnConfirmFunc(() => () => {
+          restartProcess();
+          setPopupIsVisible(false);
+        });
+      };
     } else if (
       vcData &&
       isFaceVerified === 'successful' &&
-      isCardValid === 'unverified'
+      isCardValid === 'unverified' &&
+      state.name !== 'Advertising'
     ) {
-      setOnBack(() => () => {
-        restartProcess();
-      });
-      setIsBackEnabled(true);
+      newPopupType = vcData && !beneficiaryVCData ? 'type_a' : 'type_b';
+      newOnBack = () => () => {
+        setError('');
+        setBeneficiaryError('');
+        setPopupIsVisible(true);
+        setOnConfirmFunc(() => () => {
+          (vcData && !beneficiaryVCData
+            ? restartProcess
+            : restartBeneficiaryProcess)();
+          setPopupIsVisible(false);
+        });
+      };
+    } else if (isFaceVerified === 'failed' || isCardValid !== 'unverified') {
+      newIsBackEnabled = false;
     }
-    if (vcData && isFaceVerified === 'failed') {
-      setIsBackEnabled(false);
-    }
-    if (isCardValid === 'valid') {
-      setIsBackEnabled(false);
-    } else if (isCardValid === 'invalid') {
-      setIsBackEnabled(false);
-    }
+    setOnBack(newOnBack);
+    setIsBackEnabled(newIsBackEnabled);
+    setPopupType(newPopupType);
   }, [
-    vcPhotoPath,
-    beneficiaryVCPhotoPath,
     vcData,
     isReadyToCapture,
     photoPath,
     isFaceVerified,
     isCardValid,
     beneficiaryVCData,
-    state,
+    state.name,
   ]);
 
-  const restartProcess = (startAdvertising = true) => {
+  const restartBeneficiaryProcess = (startAdvertising = false) => {
+    props.ovpble.stopTransfer();
+    setIsReadyToCapture(false);
+    props.setBeneficiaryVCData(null);
+    // Delete the file if it exists
+    RNFS.unlink(beneficiaryVCPhotoPath)
+      .then(() => {
+        console.log('File deleted');
+      })
+      .catch(err => {
+        console.log('Error deleting file:', err.message);
+      });
+    setBeneficiaryVCPhotoPath('');
+    if (startAdvertising) {
+      props.startBeneficiaryIDTransfer();
+    }
+    setIsCardValid('unverified');
+  };
+
+  const restartProcess = (startAdvertising = false) => {
     props.setVCData(null);
     props.ovpble.stopTransfer();
     setPhotoPath('');
@@ -209,9 +290,10 @@ const MainScreen: React.FC<MainScreenProps> = props => {
 
   const renderContent = () => {
     if (
-      !vcData &&
+      // !vcData &&
       !isReadyToCapture &&
       !photoPath &&
+      // !isCardValid &&
       (state.name === 'Idle' || state.name === 'Received')
     ) {
       return (
@@ -219,14 +301,24 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           beneficiaryVCData={beneficiaryVCData}
           beneficiaryVCPhotoPath={beneficiaryVCPhotoPath}
           setIsCardValid={setIsCardValid}
-          isIdVerified={false}
+          isIdVerified={isFaceVerified === 'successful'}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
-          onCapturePhoto={() => {
-            null;
-          }}
+          isPopupVisible={isPopupVisible}
+          setPopupIsVisible={setPopupIsVisible}
+          onPress={onConfirmFunc}
+          popupType={popupType}
+          setPopupType={setPopupType}
+          onCapturePhoto={
+            isFaceVerified === 'successful'
+              ? () => {}
+              : () => setIsReadyToCapture(true)
+          }
           onNationalIDClick={props.startNationalIDTransfer}
           onBeneficiaryIDClick={props.startBeneficiaryIDTransfer}
+          beneficiairyIDError={props.beneficiairyIDError}
+          nationalIDerror={props.nationalIDerror}
+          onHyperLinkTextPress={hyperLinkTextPress}
         />
       );
     } else if (state.name === 'Advertising') {
@@ -236,7 +328,13 @@ const MainScreen: React.FC<MainScreenProps> = props => {
       state.name === 'Connected'
     ) {
       return (
-        <WaitingScreen onDisconnect={restartProcess} onBack={restartProcess} />
+        <WaitingScreen
+          onDisconnect={
+            isFaceVerified === 'successful'
+              ? () => restartBeneficiaryProcess()
+              : () => restartProcess()
+          }
+        />
       );
     } else if (vcData && !isReadyToCapture && !photoPath) {
       return (
@@ -244,9 +342,14 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           beneficiaryVCData={beneficiaryVCData}
           beneficiaryVCPhotoPath={beneficiaryVCPhotoPath}
           setIsCardValid={setIsCardValid}
-          isIdVerified={false}
+          isIdVerified={isFaceVerified === 'successful'}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
+          isPopupVisible={isPopupVisible}
+          setPopupIsVisible={setPopupIsVisible}
+          onPress={onConfirmFunc}
+          popupType={popupType}
+          setPopupType={setPopupType}
           onCapturePhoto={() => setIsReadyToCapture(true)}
           onNationalIDClick={() => {
             null;
@@ -254,6 +357,9 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           onBeneficiaryIDClick={() => {
             null;
           }}
+          beneficiairyIDError={props.beneficiairyIDError}
+          nationalIDerror={props.nationalIDerror}
+          onHyperLinkTextPress={hyperLinkTextPress}
         />
       );
     } else if (vcData && isReadyToCapture && !photoPath) {
@@ -291,14 +397,22 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           beneficiaryVCData={beneficiaryVCData}
           beneficiaryVCPhotoPath={beneficiaryVCPhotoPath}
           setIsCardValid={setIsCardValid}
-          isIdVerified={true}
+          isIdVerified={isFaceVerified === 'successful'}
           vcData={vcData}
           vcPhotoPath={vcPhotoPath}
+          isPopupVisible={isPopupVisible}
+          setPopupIsVisible={setPopupIsVisible}
+          onPress={onConfirmFunc}
+          popupType={popupType}
+          setPopupType={setPopupType}
           onCapturePhoto={() => setIsReadyToCapture(true)}
           onNationalIDClick={() => {
             null;
           }}
           onBeneficiaryIDClick={props.startBeneficiaryIDTransfer}
+          beneficiairyIDError={props.beneficiairyIDError}
+          nationalIDerror={props.nationalIDerror}
+          onHyperLinkTextPress={hyperLinkTextPress}
         />
       );
     } else if (vcData && isFaceVerified === 'failed') {
@@ -311,7 +425,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
             setIsReadyToCapture(true);
           }}
           onBack={() => {
-            restartProcess(false);
+            restartProcess();
           }}
           onSubmitWithoutVerification={props.returnVC}
         />
@@ -322,7 +436,7 @@ const MainScreen: React.FC<MainScreenProps> = props => {
           onSubmit={props.returnVC}
           openedByIntent={props.openedByIntent}
           onBack={() => {
-            restartProcess(false);
+            restartProcess();
           }}
         />
       );
@@ -337,32 +451,12 @@ const MainScreen: React.FC<MainScreenProps> = props => {
             props.setBeneficiaryVCData(null);
           }}
           onBack={() => {
-            restartProcess(false);
+            restartProcess();
           }}
           onSubmitWithoutVerification={props.returnVC}
         />
       );
     }
-    // Enable this for debugging
-    // return (
-    //   <SafeAreaView style={{backgroundColor: 'white'}}>
-    //     <Text style={{color: 'black', backgroundColor: 'white'}}>
-    //       Debugging Information:
-    //       {'\n'}
-    //       nationalIDData: {JSON.stringify(vcData)}
-    //       {'\n'}
-    //       isReadyToCapture: {isReadyToCapture.toString()}
-    //       {'\n'}
-    //       photoPath: {photoPath}
-    //       {'\n'}
-    //       isFaceVerified: {isFaceVerified}
-    //       {'\n'}
-    //       isCardValid: {isCardValid}
-    //       {'\n'}
-    //       state: {JSON.stringify(state)}
-    //     </Text>
-    //   </SafeAreaView>
-    // );
   };
 
   return <SafeAreaView>{renderContent()}</SafeAreaView>;

@@ -2,6 +2,7 @@ import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import theme from '@/utils/theme';
 
 export function ButtonTertiary(props: {
+  buttonTextStyle?: any;
   style: any;
   title: string;
   onPress: () => void;
@@ -11,7 +12,9 @@ export function ButtonTertiary(props: {
       style={[secondaryStyles.button, props.style]}
       onPress={props.onPress}
       activeOpacity={0.7}>
-      <Text style={secondaryStyles.buttonText}>{props.title}</Text>
+      <Text style={[secondaryStyles.buttonText, props?.buttonTextStyle]}>
+        {props.title}
+      </Text>
     </TouchableOpacity>
   );
 }
