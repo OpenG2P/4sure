@@ -78,7 +78,7 @@ export default function App() {
           },
         },
         matcher: {
-          threshold: 1.0,
+          threshold: 2.0, // Update threshold as per requirement
         },
       },
     };
