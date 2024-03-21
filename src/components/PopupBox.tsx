@@ -28,7 +28,7 @@ export function PopupBox(props: {
         visible={props.isPopupVisible}
         onRequestClose={() => {
           props.setPopupIsVisible(false);
-          props.setPopupType && props.setPopupType('default');
+          props.setPopupType && props.setPopupType(props.popupType);
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>

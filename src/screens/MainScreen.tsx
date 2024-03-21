@@ -135,6 +135,9 @@ const MainScreen: React.FC<MainScreenProps> = props => {
       !isReadyToCapture &&
       ((isFaceVerified && !beneficiaryVCData) || !photoPath)
     ) {
+      if (!beneficiaryVCData) {
+        newPopupType = 'type_a';
+      }
       newOnBack = () => () => {
         setError('');
         setBeneficiaryError('');
